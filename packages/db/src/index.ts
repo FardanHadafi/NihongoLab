@@ -11,4 +11,13 @@ export const pool = new Pool({
   idleTimeoutMillis: 30000
 });
 export const db = drizzle(pool, { schema, casing: 'snake_case' });
-export * from '@/schema';
+
+// Export Schema
+export * from './schema';
+export * from './validation/userValidation';
+export * from './db.types';
+
+// Export Repositories (The Classes)
+export * from './repository/userRepositoryImpl';
+export * from './repository/progressRepositoryImpl';
+// Make sure export the CLASS, not just the interface
