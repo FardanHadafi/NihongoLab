@@ -16,6 +16,10 @@ export const authMiddleware = async (c: Context, next: Next) => {
     );
   }
 
+  if (!session.user.emailVerified) {
+    return c.json({ error: 'Email not verified' }, 403);
+  }
+
   // Attach user/session to context so Controllers can use it
   c.set('user', session.user);
   c.set('session', session.session);
