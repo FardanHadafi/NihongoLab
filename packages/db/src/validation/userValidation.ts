@@ -13,6 +13,13 @@ export const signUpSchema = userSchema.extend({
   password: z.string().min(8, 'Password must be at least 8 characters').max(100)
 });
 
+export const updateSchema = userSchema
+  .pick({
+    name: true,
+    image: true
+  })
+  .partial();
+
 export const signInSchema = z.object({
   email: z.email(),
   password: z.string().min(1, 'Password is required')
@@ -35,6 +42,7 @@ export const selectUserProgressSchema = createSelectSchema(userProgress);
 
 // Types
 export type SignUpInput = z.infer<typeof signUpSchema>;
+export type UpdateUserInput = z.infer<typeof updateSchema>;
 export type SignInInput = z.infer<typeof signInSchema>;
 export type User = z.infer<typeof userSchema>;
 export type Question = z.infer<typeof selectQuestionSchema>;
