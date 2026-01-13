@@ -1,7 +1,7 @@
 import { createAuthClient } from 'better-auth/svelte';
 
 const client = createAuthClient({
-	baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/auth'
+	baseURL: 'http://localhost:3000'
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
