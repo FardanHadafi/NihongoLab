@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
-import { db } from '../../../..';
+import { db } from '@nihongolab/db';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import * as schema from '../../../../packages/db/src/schema';
+import * as schema from '@nihongolab/db';
 import { sendEmail } from './email';
 
 export const auth = betterAuth({
