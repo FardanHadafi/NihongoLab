@@ -13,7 +13,8 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			'@nihongolab/db': '../../packages/db/src/index.ts',
-			'@api/*': '../api/src/*'
+			'@api/*': '../api/src/*',
+			$lib: './src/lib'
 		}
 	}
 };

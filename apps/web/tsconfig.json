@@ -8,7 +8,9 @@
 			"@nihongolab/db": ["../../packages/db/src/index.ts"],
 
 			// Link to API (For sharing Auth Types)
-			"@api/*": ["../api/src/*"]
+			"@api/*": ["../api/src/*"],
+			"$lib": ["./src/lib"],
+			"$lib/*": ["./src/lib/*"]
 		}
 	},
 	"include": [
