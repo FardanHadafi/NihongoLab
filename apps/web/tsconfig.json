@@ -1,17 +1,17 @@
 {
 	"extends": ["@repo/typescript-config/svelte.json", "./.svelte-kit/tsconfig.json"],
 	"compilerOptions": {
+		"rewriteRelativeImportExtensions": true,
+		"allowJs": true,
+		"checkJs": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
 		"module": "esnext",
-		"moduleResolution": "bundler",
-		"paths": {
-			// Link to Database Package
-			"@nihongolab/db": ["../../packages/db/src/index.ts"],
-
-			// Link to API (For sharing Auth Types)
-			"@api/*": ["../api/src/*"],
-			"$lib": ["./src/lib"],
-			"$lib/*": ["./src/lib/*"]
-		}
+		"moduleResolution": "bundler"
 	},
 	"include": [
 		"src/**/*",

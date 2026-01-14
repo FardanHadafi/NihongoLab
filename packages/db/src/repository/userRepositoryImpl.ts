@@ -1,6 +1,6 @@
-import { DbOrTx } from '@/db.types';
-import { levels, User, users } from '@/schema';
-import { SignUpInput, UpdateUserInput } from '@/validation/userValidation';
+import { DbOrTx } from '../db.types';
+import { levels, User, users } from '../schema';
+import { SignUpInput, UpdateUserInput } from '../validation/userValidation';
 import { UserRepository } from './userRepository';
 import { eq } from 'drizzle-orm';
 

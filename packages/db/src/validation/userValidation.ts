@@ -1,4 +1,4 @@
-import { levels, questions, userProgress, users } from '@/schema';
+import { levels, questions, userProgress, users } from '../schema';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 

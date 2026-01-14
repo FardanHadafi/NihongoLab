@@ -1,14 +1,19 @@
 {
-  "name": "with-svelte",
+  "name": "nihongolab",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write .",
-    "check-types": "turbo run check-types"
+    "dev:web": "turbo run dev --filter=web",
+    "dev:api": "turbo run dev --filter=api",
+    "build": "turbo run build",
+    "clean": "turbo run clean"
   },
   "devDependencies": {
+    "@types/node": "^25.0.6",
     "prettier": "^3.7.4",
     "prettier-plugin-svelte": "^3.4.0",
     "turbo": "^2.7.4"

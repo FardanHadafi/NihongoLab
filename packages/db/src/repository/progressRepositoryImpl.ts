@@ -1,8 +1,8 @@
-import { DbOrTx } from '@/db.types';
-import { UserProgress } from '@/validation/userValidation';
+import { DbOrTx } from '../db.types';
+import { UserProgress } from '../validation/userValidation';
 import { ProgressRepository } from './progressRepository';
 import { and, eq } from 'drizzle-orm';
-import { userProgress } from '@/schema';
+import { userProgress } from '../schema';
 
 export class ProgressRepositoryImpl implements ProgressRepository {
   async recordAttemp(

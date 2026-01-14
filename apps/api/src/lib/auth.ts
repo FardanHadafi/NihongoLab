@@ -3,7 +3,6 @@ import { db } from '@nihongolab/db';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import * as schema from '@nihongolab/db';
 import { sendEmail } from './email';
-import { emailOTP } from 'better-auth/plugins';
 
 export const auth = betterAuth({
   baseURL: process.env.AUTH_BASE_URL!,

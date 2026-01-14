@@ -1,6 +1,6 @@
-import { DbOrTx } from '@/db.types';
-import { User } from '@/schema';
-import { SignUpInput, UpdateUserInput } from '@/validation/userValidation';
+import { DbOrTx } from '../db.types';
+import { User } from '../schema';
+import { SignUpInput, UpdateUserInput } from '../validation/userValidation';
 
 export interface UserRepository {
   create(db: DbOrTx, data: SignUpInput): Promise<User>;

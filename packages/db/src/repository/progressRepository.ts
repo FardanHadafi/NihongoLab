@@ -1,5 +1,5 @@
-import { DbOrTx } from '@/db.types';
-import { UserProgress } from '@/validation/userValidation';
+import { DbOrTx } from '../db.types';
+import { UserProgress } from '../validation/userValidation';
 
 export interface ProgressRepository {
   recordAttemp(

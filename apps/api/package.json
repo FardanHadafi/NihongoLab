@@ -1,7 +1,9 @@
 {
   "name": "@nihongolab/api",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.6",
