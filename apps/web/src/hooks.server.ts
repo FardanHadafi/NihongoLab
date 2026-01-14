@@ -1,38 +1,30 @@
-import { redirect, type Handle } from '@sveltejs/kit';
+import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const sessionToken = event.cookies.get('better-auth.session_token');
+	// Get cookie from the browser
+	const cookieHeader = event.request.headers.get('cookie') || '';
 
-	// Protected Routes
-	const protectedRoutes = ['/dashboard', '/profie'];
-	const isProtectedRoutes = protectedRoutes.some((route) => {
-		event.url.pathname.startsWith(route);
-	});
-
-	if (isProtectedRoutes && !sessionToken) {
-		throw redirect(303, '/sign-in');
-	}
-
-	// Verify session if token exist
-	if (sessionToken) {
-		try {
-			const response = await fetch('http://localhost:3000/api/auth/get-session', {
-				headers: {
-					Cookie: `better-auth.session_token=${sessionToken}`
-				}
-			});
-
-			if (response.ok) {
-				const session = await response.json();
-				event.locals.user = session.user;
-			} else if (isProtectedRoutes) {
-				throw redirect(303, '/sign-in');
+	// Ask Backend if the session is valid
+	try {
+		const response = await fetch('http://localhost:3000/api/auth/get-session', {
+			headers: {
+				cookie: cookieHeader
 			}
-		} catch (error) {
-			if (isProtectedRoutes) {
-				throw redirect(303, '/sign-in');
-			}
+		});
+
+		if (response.ok) {
+			const sessionData = await response.json();
+			// Store both user and session in locals
+			event.locals.user = sessionData?.user || null;
+			event.locals.session = sessionData?.session || null;
+		} else {
+			event.locals.user = null;
+			event.locals.session = null;
 		}
+	} catch (error) {
+		console.error('Auth fetch failed:', error);
+		event.locals.user = null;
+		event.locals.session = null;
 	}
 
 	return resolve(event);
