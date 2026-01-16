@@ -3,6 +3,7 @@ import { db } from '@nihongolab/db';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import * as schema from '@nihongolab/db';
 import { sendEmail } from './email';
+import { openAPI } from 'better-auth/plugins';
 
 export const auth = betterAuth({
   baseURL: process.env.AUTH_BASE_URL!,
@@ -12,16 +13,6 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    sendResetPassword: async ({ user, url, token }, request) => {
-      await sendEmail({
-        to: user.email,
-        subject: 'Reset your password',
-        text: `Click the link to reset your password: ${url}`
-      });
-    },
-    onPasswordReset: async ({ user }, request) => {
-      console.log(`Password for user ${user.email} has been reset.`);
-    },
     requireEmailVerification: true
   },
   emailVerification: {
@@ -30,14 +21,15 @@ export const auth = betterAuth({
       await sendEmail({
         to: user.email,
         subject: 'Verify your email address',
-        text: `Click the link below to verify your email: ${url}`
+        html: `<h2>Click the link to verify your email: ${url}</h2>`
       });
     },
     async afterEmailVerification(user, request) {
       console.log(`${user.email} has been successfully verified !`);
     }
   },
-  trustedOrigins: ['http://localhost:5173']
+  trustedOrigins: ['http://localhost:5173'],
+  plugins: [openAPI()]
 });
 
 export type Auth = typeof auth;

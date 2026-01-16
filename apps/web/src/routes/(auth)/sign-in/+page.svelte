@@ -27,6 +27,7 @@
 </script>
 
 <div class="auth-card">
+	<a href="/" class="home-btn">Home</a>
 	<h2>Welcome Back</h2>
 
 	{#if errorMessage}
@@ -42,10 +43,6 @@
 		<div class="form-group">
 			<label for="password">Password</label>
 			<input type="password" id="password" bind:value={password} required placeholder="••••••••" />
-		</div>
-
-		<div class="actions">
-			<a href="/forgot-password" class="forgot-link">Forgot Password?</a>
 		</div>
 
 		<button type="submit" disabled={loading}>

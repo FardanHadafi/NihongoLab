@@ -1,13 +1,13 @@
 import type { RequestHandler } from '@sveltejs/kit';
 
-export const ALL: RequestHandler = async ({ request, fetch, params }) => {
+export const fallback: RequestHandler = async ({ request, fetch, params }) => {
 	const targetUrl = `http://localhost:3000/api/auth/${params.path}`;
 
 	// Forward the request to Hono
 	const response = await fetch(targetUrl, {
 		method: request.method,
 		headers: request.headers,
-		body: request.body,
+		body: request.method !== "GET" && request.method !== "HEAD" ? request.body : undefined,
 		credentials: 'include'
 	});
 

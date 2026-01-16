@@ -31,6 +31,7 @@
 </script>
 
 <div class="auth-card">
+	<a href="/" class="home-btn">Home</a>
 	<h2>Create Account</h2>
 
 	{#if errorMessage}
