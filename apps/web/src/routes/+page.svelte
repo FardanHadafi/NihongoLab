@@ -1,5 +1,6 @@
 <script lang="ts">
 	import "../lib/style/homepage.css"
+	import {goto} from "$app/navigation";
 	let email = '';
 	let mobileMenuOpen = false;
 
@@ -12,6 +13,57 @@
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen;
 	}
+
+	const features = [
+		{
+			icon: '📚',
+			title: 'Comprehensive Curriculum',
+			description: 'From beginner to advanced, master all aspects of Japanese including hiragana, katakana, kanji, grammar, and conversation.'
+		},
+		{
+			icon: '🎯',
+			title: 'Interactive Learning',
+			description: 'Engage with interactive exercises, quizzes, and real-time feedback to accelerate your learning journey.'
+		},
+		{
+			icon: '🌸',
+			title: 'Cultural Immersion',
+			description: 'Dive deep into Japanese culture, traditions, and customs while learning the language authentically.'
+		},
+		{
+			icon: '👥',
+			title: 'Community Support',
+			description: 'Join thousands of learners worldwide. Practice with peers, get help from native speakers, and stay motivated.'
+		}
+	];
+
+	const stats = [
+		{ number: '50,000+', label: 'Active Students' },
+		{ number: '2,000+', label: 'Kanji Lessons' },
+		{ number: '500+', label: 'Grammar Points' },
+		{ number: '98%', label: 'Success Rate' }
+	];
+
+	const timeline = [
+		{
+			level: 'Beginner',
+			title: 'Foundation',
+			description: 'Master hiragana and katakana, learn basic grammar, and start simple conversations.',
+			duration: '3-6 months'
+		},
+		{
+			level: 'Intermediate',
+			title: 'Building Skills',
+			description: 'Expand vocabulary, tackle essential kanji, and develop conversational fluency.',
+			duration: '6-12 months'
+		},
+		{
+			level: 'Advanced',
+			title: 'Mastery',
+			description: 'Read complex texts, understand native content, and communicate professionally.',
+			duration: '12+ months'
+		}
+	];
 </script>
 
 <div class="page-wrapper">
@@ -24,9 +76,9 @@
 			</div>
 
 			<div class="nav-links" class:active={mobileMenuOpen}>
-				<a href="#home" on:click={toggleMobileMenu}>Home</a>
-				<a href="#about" on:click={toggleMobileMenu}>About</a>
-				<a href="#contact" on:click={toggleMobileMenu}>Contact</a>
+				<a href="#home" onclick={toggleMobileMenu}>Home</a>
+				<a href="#about" onclick={toggleMobileMenu}>About</a>
+				<a href="#contact" onclick={toggleMobileMenu}>Contact</a>
 
 				<div class="nav-btn-mobile">
 					<a href="/sign-up" class="btn-signup">Sign Up</a>
@@ -42,7 +94,7 @@
 			<button
 					class="mobile-toggle"
 					class:active={mobileMenuOpen}
-					on:click={toggleMobileMenu}
+					onclick={toggleMobileMenu}
 					aria-label="Toggle menu"
 			>
 				<span></span>
@@ -53,7 +105,7 @@
 	</nav>
 
 	<!-- Hero Section -->
-	<section class="hero">
+	<section class="hero" id="home">
 		<div class="hero-content">
 			<div class="hero-text">
 				<div class="badge">
@@ -72,18 +124,11 @@
 				</p>
 
 				<div class="hero-buttons">
-					<button class="btn btn-primary">
+					<button class="btn btn-primary" onclick={() => goto("/sign-up")}>
 						Start Learning Free
 						<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
 							<path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
-					</button>
-					<button class="btn btn-secondary">
-						<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-							<path d="M10 18.75C14.8325 18.75 18.75 14.8325 18.75 10C18.75 5.16751 14.8325 1.25 10 1.25C5.16751 1.25 1.25 5.16751 1.25 10C1.25 14.8325 5.16751 18.75 10 18.75Z" stroke="currentColor" stroke-width="1.5"/>
-							<path d="M8.125 6.875L12.5 10L8.125 13.125V6.875Z" fill="currentColor"/>
-						</svg>
-						Watch Demo
 					</button>
 				</div>
 
@@ -136,8 +181,130 @@
 		</div>
 	</section>
 
+	<section class="about-section" id="about">
+		<div class="about-container">
+			<!-- Section Header -->
+			<div class="section-header">
+				<div class="badge">
+					<span class="badge-icon">🎓</span>
+					<span>About NihongoLab</span>
+				</div>
+				<h2 class="section-title">
+					Your Journey to
+					<span class="gradient-text">Japanese Fluency</span>
+				</h2>
+				<p class="section-description">
+					NihongoLab is more than just a learning platform—it's your companion on the path to mastering Japanese.
+					We combine cutting-edge technology with proven teaching methods to make learning Japanese accessible,
+					engaging, and effective for everyone.
+				</p>
+			</div>
+
+			<!-- Features Grid -->
+			<div class="features-grid">
+				{#each features as feature}
+					<div class="feature-card">
+						<div class="feature-icon">{feature.icon}</div>
+						<h3 class="feature-title">{feature.title}</h3>
+						<p class="feature-description">{feature.description}</p>
+					</div>
+				{/each}
+			</div>
+
+			<!-- Stats Section -->
+			<div class="stats-section">
+				<div class="stats-grid">
+					{#each stats as stat}
+						<div class="stat-item">
+							<div class="stat-number">{stat.number}</div>
+							<div class="stat-label">{stat.label}</div>
+						</div>
+					{/each}
+				</div>
+			</div>
+
+			<!-- Learning Path -->
+			<div class="learning-path">
+				<h3 class="path-title">Your Learning Path</h3>
+				<p class="path-subtitle">Progress through structured levels designed for your success</p>
+
+				<div class="timeline">
+					{#each timeline as step, index}
+						<div class="timeline-item">
+							<div class="timeline-marker">
+								<span class="marker-number">{index + 1}</span>
+							</div>
+							<div class="timeline-content">
+								<div class="timeline-badge">{step.level}</div>
+								<h4 class="timeline-title">{step.title}</h4>
+								<p class="timeline-description">{step.description}</p>
+								<div class="timeline-duration">
+									<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+										<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+										<path d="M8 4V8L11 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+									</svg>
+									<span>{step.duration}</span>
+								</div>
+							</div>
+							{#if index < timeline.length - 1}
+								<div class="timeline-connector"></div>
+							{/if}
+						</div>
+					{/each}
+				</div>
+			</div>
+
+			<!-- Mission Statement -->
+			<div class="mission-section">
+				<div class="mission-content">
+					<div class="mission-text">
+						<h3 class="mission-title">Our Mission</h3>
+						<p class="mission-description">
+							We believe that learning Japanese should be accessible to everyone, regardless of their background or
+							learning style. Our mission is to break down language barriers and foster cultural understanding through
+							innovative, personalized learning experiences.
+						</p>
+						<p class="mission-description">
+							Every lesson is crafted with care by experienced educators and native speakers, ensuring you learn
+							authentic Japanese that you can use in real-world situations.
+						</p>
+					</div>
+					<div class="mission-visual">
+						<div class="visual-card card-primary">
+							<div class="visual-icon">🗾</div>
+							<div class="visual-text">Cultural Authenticity</div>
+						</div>
+						<div class="visual-card card-secondary">
+							<div class="visual-icon">💡</div>
+							<div class="visual-text">Modern Methods</div>
+						</div>
+						<div class="visual-card card-tertiary">
+							<div class="visual-icon">🎯</div>
+							<div class="visual-text">Proven Results</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- CTA Section -->
+			<div class="cta-section">
+				<h3 class="cta-title">Ready to Start Your Journey?</h3>
+				<p class="cta-description">Join thousands of students already learning Japanese with NihongoLab</p>
+				<div class="cta-buttons">
+					<button class="btn btn-primary" onclick={goto("/sign-up")}>
+						Start Learning Free
+						<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+							<path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</button>
+					<button class="btn btn-secondary">View Curriculum</button>
+				</div>
+			</div>
+		</div>
+	</section>
+
 	<!-- Footer -->
-	<footer class="footer">
+	<footer class="footer" id="contact">
 		<div class="footer-content">
 			<div class="footer-top">
 				<div class="footer-brand">
@@ -210,7 +377,7 @@
 					<div class="footer-column">
 						<h3 class="footer-title">Newsletter</h3>
 						<p class="newsletter-text">Get weekly Japanese tips and cultural insights.</p>
-						<form class="newsletter-form" on:submit={handleNewsletterSubmit}>
+						<form class="newsletter-form" onsubmit={handleNewsletterSubmit}>
 							<input
 									type="email"
 									placeholder="Enter your email"
