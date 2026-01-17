@@ -1,43 +1,44 @@
 import { DbOrTx } from '../db.types';
-import { UserProgress } from '../validation/userValidation';
+import { UserProgressDto } from '../validation/userValidation';
 import { ProgressRepository } from './progressRepository';
-import { and, eq } from 'drizzle-orm';
 import { userProgress } from '../schema';
+import { sql } from 'drizzle-orm';
 
 export class ProgressRepositoryImpl implements ProgressRepository {
-  async recordAttemp(
+  async recordAttempt(
     db: DbOrTx,
-    data: { userId: string; questionId: number; isCorrect: boolean }
-  ): Promise<UserProgress> {
-    // Check if progress already exist
-    const existing = await db.query.userProgress.findFirst({
-      where: and(eq(userProgress.userId, data.userId), eq(userProgress.questionId, data.questionId))
-    });
-
-    if (existing) {
-      const [updated] = await db
-        .update(userProgress)
-        .set({
-          isCorrect: data.isCorrect,
-          attempts: existing.attempts + 1,
-          lastAttemptedAt: new Date()
-        })
-        .where(eq(userProgress.id, existing.id))
-        .returning();
-
-      return updated;
+    data: {
+      userId: string;
+      questionId: number;
+      isCorrect: boolean;
     }
-
-    const [created] = await db
+  ): Promise<UserProgressDto> {
+    const [result] = await db
       .insert(userProgress)
       .values({
         userId: data.userId,
         questionId: data.questionId,
         isCorrect: data.isCorrect,
-        attempts: 1
+        attempts: 1,
+        answeredAt: new Date(),
+        lastAttemptedAt: new Date()
+      })
+      .onConflictDoUpdate({
+        target: [userProgress.userId, userProgress.questionId],
+        set: {
+          // increment attempts safely
+          attempts: sql`${userProgress.attempts} + 1`,
+
+          // once correct, always correct
+          isCorrect: sql`${userProgress.isCorrect} OR ${data.isCorrect}`,
+
+          // timestamps
+          answeredAt: new Date(),
+          lastAttemptedAt: new Date()
+        }
       })
       .returning();
 
-    return created;
+    return result;
   }
 }

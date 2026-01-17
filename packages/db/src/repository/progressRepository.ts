@@ -1,13 +1,13 @@
 import { DbOrTx } from '../db.types';
-import { UserProgress } from '../validation/userValidation';
+import { UserProgressDto } from '../validation/userValidation';
 
 export interface ProgressRepository {
-  recordAttemp(
+  recordAttempt(
     db: DbOrTx,
     data: {
       userId: string;
       questionId: number;
       isCorrect: boolean;
     }
-  ): Promise<UserProgress>;
+  ): Promise<UserProgressDto>;
 }

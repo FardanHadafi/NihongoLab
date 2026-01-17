@@ -21,7 +21,7 @@ export class UserService {
         requiredExp: levels.requiredExp
       })
       .from(users)
-      .leftJoin(levels, eq(users.levelId, levels.id))
+      .leftJoin(levels, eq(users.currentLevelId, levels.id))
       .where(eq(users.id, userId))
       .limit(1);
 

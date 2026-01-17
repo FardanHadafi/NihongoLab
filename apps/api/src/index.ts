@@ -5,6 +5,7 @@ import { auth } from './lib/auth';
 import userController from './controller/userController';
 import learningController from './controller/learningController';
 import { serve } from '@hono/node-server';
+import dashboardController from './controller/dashboardController';
 
 const app = new Hono().basePath('/api');
 
@@ -54,6 +55,7 @@ app.on(['POST', 'GET'], '/auth/**', (c) => {
 // User Controller & Learning Controller
 app.route('/users', userController); // /api/users/me
 app.route('/learn', learningController); // /api/learn/submit
+app.route('/dashboard', dashboardController);
 
 const port = 3000;
 console.log(`Server is running on port ${port}`);

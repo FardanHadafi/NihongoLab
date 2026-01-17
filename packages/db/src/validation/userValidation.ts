@@ -46,4 +46,4 @@ export type UpdateUserInput = z.infer<typeof updateSchema>;
 export type SignInInput = z.infer<typeof signInSchema>;
 export type UserDto = z.infer<typeof userSchema>;
 export type QuestionDto = z.infer<typeof selectQuestionSchema>;
-export type UserProgress = z.infer<typeof selectUserProgressSchema>;
+export type UserProgressDto = z.infer<typeof selectUserProgressSchema>;

@@ -8,6 +8,13 @@
       "when": 1768235477720,
       "tag": "0000_happy_luckman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768648507109,
+      "tag": "0001_mature_ego",
+      "breakpoints": true
     }
   ]
 }

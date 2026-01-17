@@ -53,60 +53,55 @@ export class UserRepositoryImpl implements UserRepository {
     return updatedUser ?? null;
   }
 
-  async addExp(db: DbOrTx, userId: string, exp: number): Promise<User> {
-    // Get current user data + current level info
-    // Join "users" with "levels" to know the "requiredExp" for the current level
-    const result = await db
-      .select({
-        user: users,
-        level: levels
-      })
-      .from(users)
-      .leftJoin(levels, eq(users.levelId, levels.id))
-      .where(eq(users.id, userId))
-      .limit(1);
-
-    const currentUser = result[0]?.user;
-    const currentLevel = result[0]?.level;
+  async addExp(db: DbOrTx, userId: string, expGained: number): Promise<User> {
+    // Fetch user
+    const currentUser = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
 
     if (!currentUser) {
       throw new Error('User not found');
     }
 
-    // Default fallback if level not found
-    const requiredExp = currentLevel?.requiredExp || 100; // Fallback
+    // Fetch all levels ordered by difficulty
+    const allLevels = await db.query.levels.findMany({
+      orderBy: (levels, { asc }) => [asc(levels.requiredExp)]
+    });
 
-    // Calculate new state
-    let newExp = currentUser.currentExp + exp;
-    let newLevelId = currentUser.levelId;
-    let leveledUp = false;
-
-    // Level up logic
-    // If they have enough exp to level up
-    if (newExp >= requiredExp) {
-      // Check if next level exist
-      const nextLevelId = (currentUser.levelId || 0) + 1;
-      const nextLevel = await db.query.levels.findFirst({
-        where: eq(levels.id, nextLevelId)
-      });
-
-      if (nextLevel) {
-        // Level Up ! Reset EXP relative to new level req
-        newExp = newExp - requiredExp;
-        newLevelId = nextLevelId;
-        leveledUp = true;
-      } else {
-        // Max level Reached
-        newExp = requiredExp;
-      }
+    if (!allLevels.length) {
+      throw new Error('No levels configured');
     }
 
-    // Perform the update
+    let currentExp = currentUser.currentExp + expGained;
+    let currentLevelIndex = allLevels.findIndex((l) => l.id === currentUser.currentLevelId);
+
+    // If user has no level yet, assign first level
+    if (currentLevelIndex === -1) {
+      currentLevelIndex = 0;
+    }
+
+    // Level-up loop (supports multi-level ups)
+    while (
+      currentLevelIndex < allLevels.length - 1 &&
+      currentExp >= allLevels[currentLevelIndex].requiredExp
+    ) {
+      currentExp -= allLevels[currentLevelIndex].requiredExp;
+      currentLevelIndex++;
+    }
+
+    // Clamp EXP at max level
+    if (currentLevelIndex === allLevels.length - 1) {
+      currentExp = Math.min(currentExp, allLevels[currentLevelIndex].requiredExp);
+    }
+
+    const newLevelId = allLevels[currentLevelIndex].id;
+
+    // Update user
     const [updatedUser] = await db
       .update(users)
       .set({
-        currentExp: newExp,
-        levelId: newLevelId,
+        currentExp,
+        currentLevelId: newLevelId,
         updatedAt: new Date()
       })
       .where(eq(users.id, userId))
