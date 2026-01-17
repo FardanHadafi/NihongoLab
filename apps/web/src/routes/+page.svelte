@@ -30,19 +30,12 @@
 			title: 'Cultural Immersion',
 			description: 'Dive deep into Japanese culture, traditions, and customs while learning the language authentically.'
 		},
-		{
-			icon: '👥',
-			title: 'Community Support',
-			description: 'Join thousands of learners worldwide. Practice with peers, get help from native speakers, and stay motivated.'
-		}
 	];
 
-	const stats = [
-		{ number: '50,000+', label: 'Active Students' },
-		{ number: '2,000+', label: 'Kanji Lessons' },
-		{ number: '500+', label: 'Grammar Points' },
-		{ number: '98%', label: 'Success Rate' }
-	];
+	// const stats = [
+	// 	{ number: '2,000+', label: 'Kanji Lessons' },
+	// 	{ number: '500+', label: 'Grammar Points' },
+	// ];
 
 	const timeline = [
 		{
@@ -132,22 +125,22 @@
 					</button>
 				</div>
 
-				<div class="hero-stats">
-					<div class="stat">
-						<div class="stat-number">50K+</div>
-						<div class="stat-label">Active Learners</div>
-					</div>
-					<div class="stat-divider"></div>
-					<div class="stat">
-						<div class="stat-number">2,000+</div>
-						<div class="stat-label">Kanji Characters</div>
-					</div>
-					<div class="stat-divider"></div>
-					<div class="stat">
-						<div class="stat-number">4.9★</div>
-						<div class="stat-label">User Rating</div>
-					</div>
-				</div>
+<!--				<div class="hero-stats">-->
+<!--					<div class="stat">-->
+<!--						<div class="stat-number">50K+</div>-->
+<!--						<div class="stat-label">Active Learners</div>-->
+<!--					</div>-->
+<!--					<div class="stat-divider"></div>-->
+<!--					<div class="stat">-->
+<!--						<div class="stat-number">2,000+</div>-->
+<!--						<div class="stat-label">Kanji Characters</div>-->
+<!--					</div>-->
+<!--					<div class="stat-divider"></div>-->
+<!--					<div class="stat">-->
+<!--						<div class="stat-number">4.9★</div>-->
+<!--						<div class="stat-label">User Rating</div>-->
+<!--					</div>-->
+<!--				</div>-->
 			</div>
 
 			<div class="hero-visual">
@@ -211,17 +204,17 @@
 				{/each}
 			</div>
 
-			<!-- Stats Section -->
-			<div class="stats-section">
-				<div class="stats-grid">
-					{#each stats as stat}
-						<div class="stat-item">
-							<div class="stat-number">{stat.number}</div>
-							<div class="stat-label">{stat.label}</div>
-						</div>
-					{/each}
-				</div>
-			</div>
+<!--			&lt;!&ndash; Stats Section &ndash;&gt;-->
+<!--			<div class="stats-section">-->
+<!--				<div class="stats-grid">-->
+<!--					{#each stats as stat}-->
+<!--						<div class="stat-item">-->
+<!--							<div class="stat-number">{stat.number}</div>-->
+<!--							<div class="stat-label">{stat.label}</div>-->
+<!--						</div>-->
+<!--					{/each}-->
+<!--				</div>-->
+<!--			</div>-->
 
 			<!-- Learning Path -->
 			<div class="learning-path">

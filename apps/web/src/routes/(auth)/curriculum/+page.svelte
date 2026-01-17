@@ -4,9 +4,9 @@
     let activeLevel = 'beginner';
 
     const levels = [
-        { id: 'beginner', name: 'Beginner', icon: '🌱' },
-        { id: 'intermediate', name: 'Intermediate', icon: '🌿' },
-        { id: 'advanced', name: 'Advanced', icon: '🌳' }
+        { id: 'beginner', name: 'Beginner' },
+        // { id: 'intermediate', name: 'Intermediate'},
+        // { id: 'advanced', name: 'Advanced'}
     ];
 
     const curriculum = {
@@ -57,100 +57,100 @@
                 }
             ]
         },
-        intermediate: {
-            title: 'Intermediate Level',
-            subtitle: 'Expand your Japanese skills',
-            duration: '6-12 months',
-            modules: [
-                {
-                    number: '01',
-                    title: 'Advanced Grammar',
-                    lessons: 36,
-                    duration: '10 weeks',
-                    topics: ['Complex Particles', 'Keigo (Honorifics)', 'Conditional Forms', 'Passive & Causative'],
-                    color: '#dc2626'
-                },
-                {
-                    number: '02',
-                    title: 'JLPT N4/N3 Kanji',
-                    lessons: 48,
-                    duration: '12 weeks',
-                    topics: ['300+ New Kanji', 'Compound Words', 'Multiple Readings', 'Context Usage'],
-                    color: '#f97316'
-                },
-                {
-                    number: '03',
-                    title: 'Conversational Skills',
-                    lessons: 28,
-                    duration: '8 weeks',
-                    topics: ['Natural Expressions', 'Casual vs Formal', 'Listening Practice', 'Pronunciation'],
-                    color: '#ec4899'
-                },
-                {
-                    number: '04',
-                    title: 'Reading Comprehension',
-                    lessons: 32,
-                    duration: '10 weeks',
-                    topics: ['Short Stories', 'News Articles', 'Manga & Comics', 'Cultural Texts'],
-                    color: '#8b5cf6'
-                },
-                {
-                    number: '05',
-                    title: 'Writing Practice',
-                    lessons: 24,
-                    duration: '8 weeks',
-                    topics: ['Essay Structure', 'Formal Letters', 'Creative Writing', 'Composition Tips'],
-                    color: '#0ea5e9'
-                }
-            ]
-        },
-        advanced: {
-            title: 'Advanced Level',
-            subtitle: 'Achieve Japanese mastery',
-            duration: '12+ months',
-            modules: [
-                {
-                    number: '01',
-                    title: 'JLPT N2/N1 Kanji',
-                    lessons: 60,
-                    duration: '16 weeks',
-                    topics: ['1000+ Advanced Kanji', 'Literary Usage', 'Technical Terms', 'Classical References'],
-                    color: '#dc2626'
-                },
-                {
-                    number: '02',
-                    title: 'Business Japanese',
-                    lessons: 40,
-                    duration: '12 weeks',
-                    topics: ['Keigo Mastery', 'Email Writing', 'Presentations', 'Negotiations'],
-                    color: '#f97316'
-                },
-                {
-                    number: '03',
-                    title: 'Advanced Reading',
-                    lessons: 36,
-                    duration: '10 weeks',
-                    topics: ['Novels', 'Academic Papers', 'Technical Documents', 'Classical Literature'],
-                    color: '#ec4899'
-                },
-                {
-                    number: '04',
-                    title: 'Native-Level Speaking',
-                    lessons: 32,
-                    duration: '10 weeks',
-                    topics: ['Dialects', 'Idioms & Slang', 'Debate Skills', 'Natural Flow'],
-                    color: '#8b5cf6'
-                },
-                {
-                    number: '05',
-                    title: 'Cultural Mastery',
-                    lessons: 28,
-                    duration: '8 weeks',
-                    topics: ['History & Traditions', 'Social Etiquette', 'Pop Culture', 'Regional Differences'],
-                    color: '#0ea5e9'
-                }
-            ]
-        }
+        // intermediate: {
+        //     title: 'Intermediate Level',
+        //     subtitle: 'Expand your Japanese skills',
+        //     duration: '6-12 months',
+        //     modules: [
+        //         {
+        //             number: '01',
+        //             title: 'Advanced Grammar',
+        //             lessons: 36,
+        //             duration: '10 weeks',
+        //             topics: ['Complex Particles', 'Keigo (Honorifics)', 'Conditional Forms', 'Passive & Causative'],
+        //             color: '#dc2626'
+        //         },
+        //         {
+        //             number: '02',
+        //             title: 'JLPT N4/N3 Kanji',
+        //             lessons: 48,
+        //             duration: '12 weeks',
+        //             topics: ['300+ New Kanji', 'Compound Words', 'Multiple Readings', 'Context Usage'],
+        //             color: '#f97316'
+        //         },
+        //         {
+        //             number: '03',
+        //             title: 'Conversational Skills',
+        //             lessons: 28,
+        //             duration: '8 weeks',
+        //             topics: ['Natural Expressions', 'Casual vs Formal', 'Listening Practice', 'Pronunciation'],
+        //             color: '#ec4899'
+        //         },
+        //         {
+        //             number: '04',
+        //             title: 'Reading Comprehension',
+        //             lessons: 32,
+        //             duration: '10 weeks',
+        //             topics: ['Short Stories', 'News Articles', 'Manga & Comics', 'Cultural Texts'],
+        //             color: '#8b5cf6'
+        //         },
+        //         {
+        //             number: '05',
+        //             title: 'Writing Practice',
+        //             lessons: 24,
+        //             duration: '8 weeks',
+        //             topics: ['Essay Structure', 'Formal Letters', 'Creative Writing', 'Composition Tips'],
+        //             color: '#0ea5e9'
+        //         }
+        //     ]
+        // },
+        // advanced: {
+        //     title: 'Advanced Level',
+        //     subtitle: 'Achieve Japanese mastery',
+        //     duration: '12+ months',
+        //     modules: [
+        //         {
+        //             number: '01',
+        //             title: 'JLPT N2/N1 Kanji',
+        //             lessons: 60,
+        //             duration: '16 weeks',
+        //             topics: ['1000+ Advanced Kanji', 'Literary Usage', 'Technical Terms', 'Classical References'],
+        //             color: '#dc2626'
+        //         },
+        //         {
+        //             number: '02',
+        //             title: 'Business Japanese',
+        //             lessons: 40,
+        //             duration: '12 weeks',
+        //             topics: ['Keigo Mastery', 'Email Writing', 'Presentations', 'Negotiations'],
+        //             color: '#f97316'
+        //         },
+        //         {
+        //             number: '03',
+        //             title: 'Advanced Reading',
+        //             lessons: 36,
+        //             duration: '10 weeks',
+        //             topics: ['Novels', 'Academic Papers', 'Technical Documents', 'Classical Literature'],
+        //             color: '#ec4899'
+        //         },
+        //         {
+        //             number: '04',
+        //             title: 'Native-Level Speaking',
+        //             lessons: 32,
+        //             duration: '10 weeks',
+        //             topics: ['Dialects', 'Idioms & Slang', 'Debate Skills', 'Natural Flow'],
+        //             color: '#8b5cf6'
+        //         },
+        //         {
+        //             number: '05',
+        //             title: 'Cultural Mastery',
+        //             lessons: 28,
+        //             duration: '8 weeks',
+        //             topics: ['History & Traditions', 'Social Etiquette', 'Pop Culture', 'Regional Differences'],
+        //             color: '#0ea5e9'
+        //         }
+        //     ]
+        // }
     };
 
     $: currentCurriculum = curriculum[activeLevel]
@@ -166,7 +166,6 @@
                         class:active={activeLevel === level.id}
                         onclick={() => activeLevel = level.id}
                 >
-                    <span class="tab-icon">{level.icon}</span>
                     <span class="tab-name">{level.name}</span>
                 </button>
             {/each}
@@ -178,10 +177,10 @@
     <!-- Hero Section -->
     <section class="curriculum-hero">
         <div class="hero-content">
-            <div class="badge">
-                <span class="badge-icon">📖</span>
-                <span>Complete Curriculum</span>
-            </div>
+<!--            <div class="badge">-->
+<!--                <span class="badge-icon">📖</span>-->
+<!--                <span>Complete Curriculum</span>-->
+<!--            </div>-->
             <h1 class="hero-title">
                 Master Japanese
                 <span class="gradient-text">Step by Step</span>
@@ -246,12 +245,12 @@
                                 {/each}
                             </ul>
                         </div>
-                        <button class="module-btn">
-                            Start Module
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
+<!--                        <button class="module-btn">-->
+<!--                            Start Module-->
+<!--                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">-->
+<!--                                <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                            </svg>-->
+<!--                        </button>-->
                     </div>
                 {/each}
             </div>
@@ -294,7 +293,7 @@
                 <h2 class="cta-title">Ready to Begin Your Journey?</h2>
                 <p class="cta-text">Start with our beginner course and work your way to fluency</p>
                 <div class="cta-buttons">
-                    <button class="btn btn-primary" onclick={goto("/sign-up")}>
+                    <button class="btn btn-primary" onclick={() => goto("/sign-up")}>
                         Start Learning Now
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

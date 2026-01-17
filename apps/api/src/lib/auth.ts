@@ -9,7 +9,12 @@ export const auth = betterAuth({
   baseURL: process.env.AUTH_BASE_URL!,
   database: drizzleAdapter(db, {
     provider: 'pg',
-    schema
+    schema: {
+      user: schema.users, // Map 'user' to your 'users' table
+      session: schema.session, // Map 'session' to your 'session' table
+      account: schema.account, // Map 'account' to your 'account' table
+      verification: schema.verification
+    }
   }),
   emailAndPassword: {
     enabled: true,
@@ -18,10 +23,12 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
+      const verificationUrl = `${url}&callbackURL=http://localhost:5173/sign-in`;
+      console.log('Verification URL:', verificationUrl);
       await sendEmail({
-        to: user.email,
+        to: process.env.DEV_MAIL!,
         subject: 'Verify your email address',
-        html: `<h2>Click the link to verify your email: ${url}</h2>`
+        text: `Click the link to verify your email: ${url}`
       });
     },
     async afterEmailVerification(user, request) {

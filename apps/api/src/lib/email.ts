@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 export type EmailParams = {
   to: string;
   subject: string;
-  html: string;
+  text: string;
 };
 
 let resendInstance: Resend | null = null;
@@ -16,7 +16,7 @@ function getResend() {
   return resendInstance;
 }
 
-export async function sendEmail({ to, subject, html }: EmailParams) {
+export async function sendEmail({ to, subject, text }: EmailParams) {
   const resend = getResend();
   // Skip in unit test
   if (process.env.NODE_ENV === 'test') {
@@ -28,7 +28,7 @@ export async function sendEmail({ to, subject, html }: EmailParams) {
     from: isDev ? 'Nihongo Lab <onboarding@resend.dev>' : process.env.EMAIL_FROM!,
     to: isDev ? (process.env.DEV_EMAIL ?? to) : to,
     subject,
-    html
+    text
   });
 
   if (error) {
