@@ -1,4 +1,4 @@
-import { InferSelectModel } from 'drizzle-orm';
+import { InferSelectModel, relations } from 'drizzle-orm';
 import {
   pgTable,
   serial,
@@ -183,6 +183,13 @@ export const userStats = pgTable('user_stats', {
   streak: integer('streak').default(0).notNull(),
   lastActiveAt: timestamp('last_active_at').defaultNow().notNull()
 });
+
+export const usersRelations = relations(users, ({ one }) => ({
+  currentLevel: one(levels, {
+    fields: [users.currentLevelId],
+    references: [levels.id]
+  })
+}));
 
 // VOCABULARY
 
