@@ -20,12 +20,19 @@
 
 		if (data) {
 			// Animate cards in
-			gsap.from('.stat-card', {
-				duration: 0.6,
-				y: 30,
-				opacity: 0,
-				stagger: 0.1,
-				ease: 'power3.out'
+			requestAnimationFrame(() => {
+				gsap.fromTo(
+					'.stat-card',
+					{ opacity: 0, y: 30 },
+					{
+						opacity: 1,
+						y: 0,
+						duration: 0.6,
+						stagger: 0.1,
+						ease: 'power3.out',
+						clearProps: 'opacity,transform'
+					}
+				);
 			});
 
 			// Animate progress bar
@@ -87,18 +94,18 @@
 	{#if loading}
 		<div class="loading-state">
 			<div class="spinner"></div>
-			<p>読み込み中...</p>
+			<p>Loading...</p>
 		</div>
 	{:else if error}
 		<div class="error-state">
 			<div class="error-icon">⚠️</div>
-			<h2>エラーが発生しました</h2>
+			<h2>An error has occurred</h2>
 			<p>{error}</p>
-			<button class="retry-btn" on:click={fetchDashboardData}>再試行</button>
+			<button class="retry-btn" onclick={fetchDashboardData}>Retry</button>
 		</div>
 	{:else if data}
 		<div class="dashboard-header">
-			<h1>ダッシュボード</h1>
+			<h1>Dashboard</h1>
 			<p class="welcome">ようこそ、{data.user.name}さん！</p>
 		</div>
 
@@ -107,12 +114,12 @@
 			<div class="level-card stat-card">
 				<div class="level-header">
 					<div class="current-level">
-						<span class="level-label">現在のレベル</span>
-						<span class="level-name">{data.user.currentLevel?.name || 'N5'}</span>
+						<span class="level-label">Current Level</span>
+						<span class="level-name">{data.user.currentLevel?.name}</span>
 					</div>
 					{#if data.user.nextLevel}
 						<div class="next-level">
-							<span class="next-label">次のレベル</span>
+							<span class="next-label">Next Level</span>
 							<span class="next-name">{data.user.nextLevel.name}</span>
 						</div>
 					{/if}
@@ -127,7 +134,8 @@
 						<div class="progress-fill" style="width: 0%"></div>
 					</div>
 					<p class="exp-remaining">
-						次のレベルまで {(data.user.currentLevel?.requiredExp || 1000) - data.user.currentExp} XP
+						To the next level: {(data.user.currentLevel?.requiredExp || 1000) -
+							data.user.currentExp} XP
 					</p>
 				</div>
 			</div>
@@ -139,7 +147,7 @@
 				<div class="stat-icon">🔥</div>
 				<div class="stat-content">
 					<h3 class="stat-value">{data.stats.streak}</h3>
-					<p class="stat-label">日連続</p>
+					<p class="stat-label">Consecutive Days</p>
 				</div>
 			</div>
 
@@ -147,7 +155,7 @@
 				<div class="stat-icon">🎯</div>
 				<div class="stat-content">
 					<h3 class="stat-value">{data.stats.accuracyRate.toFixed(1)}%</h3>
-					<p class="stat-label">正解率</p>
+					<p class="stat-label">Correct Answer Rate</p>
 				</div>
 			</div>
 
@@ -155,7 +163,7 @@
 				<div class="stat-icon">📝</div>
 				<div class="stat-content">
 					<h3 class="stat-value">{data.stats.totalAnswered}</h3>
-					<p class="stat-label">解答済み</p>
+					<p class="stat-label">Total Answered</p>
 				</div>
 			</div>
 
@@ -163,14 +171,14 @@
 				<div class="stat-icon">✅</div>
 				<div class="stat-content">
 					<h3 class="stat-value">{data.questionsMastered}</h3>
-					<p class="stat-label">マスター済み</p>
+					<p class="stat-label">Total Mastered</p>
 				</div>
 			</div>
 		</section>
 
 		<!-- Level Progress Breakdown -->
 		<section class="level-breakdown">
-			<h2>レベル別進捗</h2>
+			<h2>Progress By Level</h2>
 			<div class="level-list">
 				{#each data.levelProgress as level}
 					<div class="level-item stat-card">
@@ -183,7 +191,7 @@
 						<div class="level-bar">
 							<div class="level-bar-fill" style="width: {level.percentage}%"></div>
 						</div>
-						<p class="level-percentage">{level.percentage.toFixed(1)}% 完了</p>
+						<p class="level-percentage">{level.percentage.toFixed(1)}% Completion</p>
 					</div>
 				{/each}
 			</div>
@@ -191,7 +199,7 @@
 
 		<!-- Recent Activity -->
 		<section class="activity-section">
-			<h2>最近の活動</h2>
+			<h2>Recent Activities</h2>
 			<div class="activity-card stat-card">
 				<div class="activity-grid">
 					{#each data.recentActivity.slice().reverse() as activity}
@@ -204,29 +212,29 @@
 						</div>
 					{/each}
 				</div>
-				<p class="activity-footer">過去7日間の学習履歴</p>
+				<p class="activity-footer">Learning History (7 Days)</p>
 			</div>
 		</section>
 
 		<!-- Quick Actions -->
 		<section class="quick-actions">
-			<h2>クイックアクション</h2>
+			<h2>Quick Action</h2>
 			<div class="actions-grid">
 				<a href="/practice" class="action-btn stat-card">
 					<span class="action-icon">📚</span>
-					<span class="action-text">練習を始める</span>
+					<span class="action-text">Start Practicing</span>
 				</a>
 
 				{#if data.questionsNeedingReview > 0}
 					<a href="/review" class="action-btn stat-card review-btn">
 						<span class="action-icon">🔄</span>
-						<span class="action-text">復習 ({data.questionsNeedingReview})</span>
+						<span class="action-text">Review ({data.questionsNeedingReview})</span>
 					</a>
 				{/if}
 
 				<a href="/vocabulary" class="action-btn stat-card">
 					<span class="action-icon">📖</span>
-					<span class="action-text">単語リスト</span>
+					<span class="action-text">Word List</span>
 				</a>
 			</div>
 		</section>

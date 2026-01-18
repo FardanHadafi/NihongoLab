@@ -3,6 +3,7 @@
 	margin: 0 auto;
 	padding: 2rem;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	padding-bottom: 6rem;
 }
 
 .dashboard-header {
@@ -49,7 +50,7 @@ section h2 {
 
 /* Level Section */
 .level-card {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	background: linear-gradient(135deg, #dc2626 0%, #f97316 50%, #ec4899 100%);
 	color: white;
 	padding: 2rem;
 }
@@ -244,7 +245,7 @@ section h2 {
 	width: 100%;
 	min-height: 40px;
 	max-height: 120px;
-	background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+	background: linear-gradient(135deg, #dc2626 0%, #f97316 50%, #ec4899 100%);
 	border-radius: 4px;
 	transition: height 0.3s ease;
 }
@@ -373,7 +374,7 @@ section h2 {
 
 .retry-btn {
 	padding: 0.75rem 2rem;
-	background: #667eea;
+	background: linear-gradient(135deg, #dc2626 0%, #f97316 50%, #ec4899 100%);
 	color: white;
 	border: none;
 	border-radius: 8px;
@@ -384,6 +385,6 @@ section h2 {
 }
 
 .retry-btn:hover {
-	background: #5568d3;
+	background: linear-gradient(135deg, #dc2626 0%, #f97316 50%, #ec4899 100%);
 	transform: translateY(-2px);
 }

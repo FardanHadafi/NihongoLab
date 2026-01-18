@@ -21,11 +21,12 @@
 		await fetchUserProfile();
 
 		// Animate navbar on load
-		gsap.from('.navbar', {
-			duration: 0.6,
-			y: -100,
-			opacity: 0,
-			ease: 'power3.out'
+		requestAnimationFrame(() => {
+			gsap.from('.navbar', {
+				y: -100,
+				opacity: 0,
+				clearProps: 'transform'
+			});
 		});
 	});
 
@@ -116,23 +117,23 @@
 	<div class="navbar-container">
 		<!-- Logo -->
 		<a href="/dashboard" class="logo" onclick={closeMenus}>
-			<span class="logo-icon">🇯🇵</span>
-			<span class="logo-text">NihongoLab</span>
+			<span class="logo-jp">日本語</span>
+			<span class="logo-name">NihongoLab</span>
 		</a>
 
 		<!-- Desktop Navigation -->
 		<div class="nav-links">
 			<a href="/learn/hiragana" class="nav-link">
 				<span class="nav-icon">あ</span>
-				<span>ひらがな</span>
+				<span>Hiragana</span>
 			</a>
 			<a href="/learn/katakana" class="nav-link">
 				<span class="nav-icon">ア</span>
-				<span>カタカナ</span>
+				<span>Katakana</span>
 			</a>
 			<a href="/learn/kanji" class="nav-link">
 				<span class="nav-icon">漢</span>
-				<span>漢字</span>
+				<span>Kanji</span>
 			</a>
 		</div>
 
@@ -203,7 +204,7 @@
 							<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
 							<circle cx="12" cy="7" r="4" />
 						</svg>
-						<span>プロフィール</span>
+						<span>Profile</span>
 					</a>
 
 					<a href="/change-password" class="dropdown-item" onclick={closeMenus}>
@@ -218,7 +219,7 @@
 							<rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
 							<path d="M7 11V7a5 5 0 0 1 10 0v4" />
 						</svg>
-						<span>パスワード変更</span>
+						<span>Change Password</span>
 					</a>
 
 					<div class="dropdown-divider"></div>
@@ -236,7 +237,7 @@
 							<polyline points="16 17 21 12 16 7" />
 							<line x1="21" y1="12" x2="9" y2="12" />
 						</svg>
-						<span>{isLoggingOut ? 'ログアウト中...' : 'ログアウト'}</span>
+						<span>{isLoggingOut ? 'Signing Out...' : 'Sign Out'}</span>
 					</button>
 				</div>
 			{/if}
@@ -248,15 +249,15 @@
 		<div class="mobile-menu">
 			<a href="/learn/hiragana" class="mobile-link" onclick={closeMenus}>
 				<span class="nav-icon">あ</span>
-				<span>ひらがな</span>
+				<span>Hiragana</span>
 			</a>
 			<a href="/learn/katakana" class="mobile-link" onclick={closeMenus}>
 				<span class="nav-icon">ア</span>
-				<span>カタカナ</span>
+				<span>Katakana</span>
 			</a>
 			<a href="/learn/kanji" class="mobile-link" onclick={closeMenus}>
 				<span class="nav-icon">漢</span>
-				<span>漢字</span>
+				<span>Kanji</span>
 			</a>
 		</div>
 	{/if}
