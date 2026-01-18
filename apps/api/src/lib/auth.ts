@@ -10,9 +10,9 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
-      user: schema.users, // Map 'user' to your 'users' table
-      session: schema.session, // Map 'session' to your 'session' table
-      account: schema.account, // Map 'account' to your 'account' table
+      user: schema.users,
+      session: schema.session,
+      account: schema.account,
       verification: schema.verification
     }
   }),

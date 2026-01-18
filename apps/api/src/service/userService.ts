@@ -14,7 +14,7 @@ export class UserService {
     const profile = await db
       .select({
         id: users.id,
-        name: users.image,
+        name: users.name,
         image: users.image,
         currentExp: users.currentExp,
         levelName: levels.name, // "N5 etc"

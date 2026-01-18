@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import '../../../lib/style/dashboard.css';
 	import type { DashboardData } from '@nihongolab/db';
+	import Navbar from '$lib/components/Navbar.svelte';
 
 	let data: DashboardData | null = null;
 	let loading = true;
@@ -79,6 +80,8 @@
 		return `${diffDays}日前`;
 	}
 </script>
+
+<Navbar />
 
 <div class="dashboard">
 	{#if loading}

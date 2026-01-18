@@ -43,3 +43,9 @@ export interface DashboardData {
   questionsMastered: number;
   questionsNeedingReview: number;
 }
+
+export interface User {
+  name: string;
+  email: string;
+  image?: string | null;
+}
