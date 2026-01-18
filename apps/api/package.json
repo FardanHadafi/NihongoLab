@@ -10,6 +10,7 @@
     "@hono/zod-validator": "^0.7.6",
     "@nihongolab/db": "workspace:*",
     "better-auth": "^1.4.11",
+    "cloudinary": "^2.9.0",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.11.3",

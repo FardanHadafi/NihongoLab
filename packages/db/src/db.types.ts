@@ -49,3 +49,13 @@ export interface User {
   email: string;
   image?: string | null;
 }
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  currentExp: number;
+  levelName: string | null;
+  requiredExp: number | null;
+}
