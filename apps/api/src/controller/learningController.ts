@@ -4,7 +4,7 @@ import { authMiddleware } from '@/middleware/auth.middleware';
 import z from 'zod';
 import { zValidator } from '@hono/zod-validator';
 import { db, levels, questions } from '@nihongolab/db';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 
 const answerInputSchema = z.object({
   questionId: z.number(),
@@ -59,28 +59,33 @@ learningController.post(
   }
 );
 
-learningController.get('/:type/quiz', async (c) => {
-  const { type } = c.req.param();
+learningController.get('/:script', async (c) => {
+  const { script } = c.req.param();
   const limit = Number(c.req.query('limit') ?? 10);
 
-  if (!['hiragana', 'katakana', 'kanji'].includes(type)) {
-    return c.json({ error: 'Invalid lesson type' }, 400);
+  if (!['hiragana', 'katakana', 'kanji'].includes(script)) {
+    return c.json({ error: 'Invalid script type' }, 400);
   }
 
-  const quiz = await db
+  // Kana = reading only
+  const questionType = script === 'kanji' ? undefined : 'reading';
+
+  const rows = await db
     .select({
       id: questions.id,
       character: questions.questionText,
-      options: questions.options,
-      correct: questions.correctAnswer
+      options: questions.options
     })
     .from(questions)
-    .innerJoin(levels, eq(questions.levelId, levels.id))
-    .where(eq(levels.name, type))
+    .where(
+      questionType
+        ? and(eq(questions.scriptType, script), eq(questions.questionType, questionType))
+        : eq(questions.scriptType, script)
+    )
     .orderBy(sql`RANDOM()`)
     .limit(limit);
 
-  return c.json(quiz);
+  return c.json(rows);
 });
 
 export default learningController;

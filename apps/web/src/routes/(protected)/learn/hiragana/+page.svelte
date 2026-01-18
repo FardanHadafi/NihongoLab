@@ -11,20 +11,35 @@
 
 	let lessonResult: LessonResult | null = null;
 
-	onMount(async () => {
-		const res = await fetch('/api/learn/hiragana/quiz?limit=10');
+	// ---------- LESSON FLOW ----------
+	async function startLesson() {
+		loading = true;
+		finished = false;
+		currentIndex = 0;
+		selected = null;
+		lessonResult = null;
+
+		const res = await fetch('/api/learn/hiragana?limit=10');
 		questions = await res.json();
+
 		loading = false;
-	});
+	}
+
+	function nextLesson() {
+		startLesson();
+	}
+
+	onMount(startLesson);
 
 	$: current = questions[currentIndex];
 
+	// ---------- ANSWER ----------
 	async function selectOption(option: string) {
 		if (selected || !current) return;
 
 		selected = option;
 
-		// submit answer (authoritative)
+		// Authoritative submit
 		await fetch('/api/learn/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -34,7 +49,7 @@
 			})
 		});
 
-		// delay = feedback time
+		// Feedback delay
 		setTimeout(() => {
 			selected = null;
 			currentIndex++;
@@ -46,6 +61,7 @@
 		}, 700);
 	}
 
+	// ---------- COMPLETE ----------
 	async function completeLesson() {
 		const res = await fetch('/api/learn/complete', {
 			method: 'POST',
@@ -61,43 +77,47 @@
 
 <!-- LOADING -->
 {#if loading}
-	<p class="text-center mt-10">Loading lesson...</p>
+	<p class="loading">Loading lesson...</p>
 
 	<!-- RESULT -->
 {:else if finished && lessonResult}
-	<div class="max-w-md mx-auto mt-10 text-center space-y-4">
-		<h2 class="text-3xl font-bold">Lesson Complete 🎉</h2>
+	<div class="result">
+		<h2 class="result-title">Lesson Complete 🎉</h2>
 
-		<p class="text-lg">
+		<p class="result-score">
 			{lessonResult.correct} / {lessonResult.total} correct
 		</p>
 
-		<p class="text-green-600 font-semibold text-xl">
+		<p class="result-xp">
 			+{lessonResult.expEarned} XP
 		</p>
 
-		<a href="/learn" class="btn btn-primary w-full"> Continue </a>
+		<div class="result-actions">
+			<button class="btn-primary" onclick={nextLesson}> Next </button>
+
+			<a href="/dashboard" class="btn-secondary"> Done </a>
+		</div>
 	</div>
 
 	<!-- QUIZ -->
 {:else if current}
-	<div class="max-w-md mx-auto mt-10 space-y-6">
-		<p class="text-sm text-gray-500">
+	<div class="quiz">
+		<p class="quiz-progress">
 			Question {currentIndex + 1} / {questions.length}
 		</p>
 
-		<div class="text-center text-7xl font-bold">
+		<div class="quiz-character">
 			{current.character}
 		</div>
 
-		<div class="grid grid-cols-2 gap-4">
+		<div class="options-grid">
 			{#each current.options as option}
 				<button
 					class="option"
 					class:correct={selected && option === current.correct}
 					class:wrong={selected && option === selected && option !== current.correct}
 					disabled={!!selected}
-					on:click={() => selectOption(option)}
+					onclick={() => selectOption(option)}
 				>
 					{option}
 				</button>
