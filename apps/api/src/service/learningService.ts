@@ -6,7 +6,7 @@ import {
   UserRepositoryImpl,
   ProgressRepositoryImpl
 } from '@nihongolab/db';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and, sql, inArray } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 
 export class LearningService {
@@ -97,6 +97,67 @@ export class LearningService {
         newLevelId: updatedUser?.currentLevelId ?? null,
         userExp: updatedUser?.currentExp ?? null,
         attempts: progress.attempts
+      };
+    });
+  }
+
+  async completeLesson(userId: string, questionIds: number[]) {
+    return await db.transaction(async (tx) => {
+      const attempts = await tx.query.userProgress.findMany({
+        where: and(eq(userProgress.userId, userId), inArray(userProgress.questionId, questionIds))
+      });
+
+      const latest = new Map<number, boolean>();
+      for (const a of attempts) {
+        if (!latest.has(a.questionId)) {
+          latest.set(a.questionId, a.isCorrect);
+        }
+      }
+
+      const total = questionIds.length;
+      let correct = 0;
+      latest.forEach((v) => {
+        if (v) correct++;
+      });
+
+      const accuracy = total > 0 ? correct / total : 0;
+
+      let expEarned = 10;
+      if (accuracy === 1) expEarned = 50;
+      else if (accuracy >= 0.7) expEarned = 30;
+
+      const updatedUser = await this.userRepository.addExp(tx, userId, expEarned);
+
+      await tx
+        .insert(userStats)
+        .values({
+          userId,
+          streak: 1,
+          lastActiveAt: new Date()
+        })
+        .onConflictDoUpdate({
+          target: userStats.userId,
+          set: {
+            streak: sql`
+            CASE
+              WHEN DATE(${userStats.lastActiveAt}) = CURRENT_DATE - INTERVAL '1 day'
+              THEN ${userStats.streak} + 1
+              WHEN DATE(${userStats.lastActiveAt}) = CURRENT_DATE
+              THEN ${userStats.streak}
+              ELSE 1
+            END
+          `,
+            lastActiveAt: new Date()
+          }
+        });
+
+      return {
+        total,
+        correct,
+        accuracy,
+        expEarned,
+        userExp: updatedUser.currentExp,
+        levelId: updatedUser.currentLevelId
       };
     });
   }

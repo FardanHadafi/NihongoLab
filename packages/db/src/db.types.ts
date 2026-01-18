@@ -59,3 +59,26 @@ export interface UserProfile {
   levelName: string | null;
   requiredExp: number | null;
 }
+
+export interface JishoResponse {
+  data: Array<{
+    japanese: Array<{ word?: string; reading: string }>;
+    senses: Array<{ english_definitions: string[] }>;
+  }>;
+}
+
+export type QuizQuestion = {
+  id: number;
+  character: string;
+  options: string[];
+  correct: string;
+};
+
+export type LessonResult = {
+  total: number;
+  correct: number;
+  accuracy: number;
+  expEarned: number;
+  userExp: number;
+  levelId: number;
+};

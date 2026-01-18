@@ -120,6 +120,8 @@ export const questions = pgTable(
       .notNull()
       .references(() => levels.id, { onDelete: 'cascade' }),
 
+    scriptType: text('script_type').notNull(),
+    questionType: text('question_type').$type<'reading' | 'meaning'>().notNull(),
     questionText: text('question_text').notNull(),
     correctAnswer: text('correct_answer').notNull(),
 

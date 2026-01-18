@@ -1,6 +1,6 @@
 {
-  "id": "b0363a76-8f3d-46d5-a74b-e6ca19f781a5",
-  "prevId": "b4049808-d220-4d07-9953-e7c3cfeef1cb",
+  "id": "1e74447e-d7fa-4829-9e2f-1b92d3785797",
+  "prevId": "0d3d3275-efc9-48f8-a090-9ba5d68ee99f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -170,6 +170,18 @@
         "level_id": {
           "name": "level_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "script_type": {
+          "name": "script_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "question_type": {
+          "name": "question_type",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
