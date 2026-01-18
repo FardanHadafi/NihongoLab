@@ -67,13 +67,13 @@
 		if (file) {
 			// Validate file size (max 5MB)
 			if (file.size > 5 * 1024 * 1024) {
-				error = '画像サイズは5MB以下である必要があります';
+				error = 'Image Size Must Be 5MB or Less';
 				return;
 			}
 
 			// Validate file type
 			if (!file.type.startsWith('image/')) {
-				error = '画像ファイルを選択してください';
+				error = 'Please Select an Image File';
 				return;
 			}
 
@@ -100,7 +100,7 @@
 		});
 
 		if (!response.ok) {
-			throw new Error('画像のアップロードに失敗しました');
+			throw new Error('Image Upload Failed');
 		}
 
 		const data = await response.json();
@@ -128,7 +128,7 @@
 				try {
 					finalImageUrl = await uploadImage(imageFile);
 				} catch (uploadError) {
-					throw new Error('画像のアップロードに失敗しました');
+					throw new Error('Image Upload Failed');
 				} finally {
 					uploading = false;
 				}
@@ -164,7 +164,7 @@
 			// Clear file input
 			imageFile = null;
 
-			successMessage = 'プロフィールが更新されました！';
+			successMessage = 'Your Profile Has Been Updated !';
 
 			// Clear success message after 3 seconds
 			setTimeout(() => {
@@ -197,26 +197,26 @@
 	{#if loading}
 		<div class="loading-state">
 			<div class="spinner"></div>
-			<p>読み込み中...</p>
+			<p>Loading...</p>
 		</div>
 	{:else if error && !profile}
 		<div class="error-state">
 			<div class="error-icon">⚠️</div>
-			<h2>エラーが発生しました</h2>
+			<h2>An Error Has Occurred</h2>
 			<p>{error}</p>
-			<button class="retry-btn" onclick={fetchProfile}>再試行</button>
+			<button class="retry-btn" onclick={fetchProfile}>Retry</button>
 		</div>
 	{:else if profile}
 		<div class="profile-container">
 			<div class="profile-header">
-				<h1>プロフィール設定</h1>
-				<p class="subtitle">アカウント情報を管理</p>
+				<h1>Profile Settings</h1>
+				<p class="subtitle">Manage Account Information</p>
 			</div>
 
 			<div class="profile-grid">
 				<!-- Profile Info Card -->
 				<div class="profile-card info-card">
-					<h2>アカウント情報</h2>
+					<h2>Account Information</h2>
 
 					<div class="avatar-section">
 						{#if imagePreview}
@@ -229,24 +229,24 @@
 					</div>
 
 					<div class="info-item">
-						<label class="info-label">ユーザーID</label>
+						<label class="info-label">User ID</label>
 						<p class="info-value">{profile.id}</p>
 					</div>
 
 					<div class="info-item">
-						<label class="info-label">メールアドレス</label>
+						<label class="info-label">Email Address</label>
 						<p class="info-value">{profile.email}</p>
 					</div>
 
 					<div class="info-item">
-						<label class="info-label">現在のレベル</label>
+						<label class="info-label">Current Level</label>
 						<p class="info-value level-badge">{profile.levelName || 'N5'}</p>
 					</div>
 
 					{#if profile.requiredExp}
 						<div class="progress-section">
 							<div class="progress-header">
-								<span class="progress-label">経験値</span>
+								<span class="progress-label">Exp Points</span>
 								<span class="progress-value">{profile.currentExp} / {profile.requiredExp} XP</span>
 							</div>
 							<div class="progress-bar">
@@ -258,7 +258,7 @@
 
 				<!-- Edit Form Card -->
 				<div class="profile-card edit-card">
-					<h2>プロフィール編集</h2>
+					<h2>Edit Profile</h2>
 
 					{#if successMessage}
 						<div class="success-message">
@@ -297,19 +297,19 @@
 
 					<form onsubmit={handleSubmit}>
 						<div class="form-group">
-							<label for="name" class="form-label">名前 *</label>
+							<label for="name" class="form-label">Name *</label>
 							<input
 								type="text"
 								id="name"
 								class="form-input"
 								bind:value={name}
-								placeholder="山田太郎"
+								placeholder="John Doe"
 								required
 							/>
 						</div>
 
 						<div class="form-group">
-							<label for="imageUrl" class="form-label">プロフィール画像URL</label>
+							<label for="imageUrl" class="form-label">Profile Image URL</label>
 							<input
 								type="url"
 								id="imageUrl"
@@ -322,11 +322,11 @@
 								placeholder="https://example.com/avatar.jpg"
 								disabled={!!imageFile}
 							/>
-							<p class="form-help">画像URLを入力するか、下のファイルをアップロードしてください</p>
+							<p class="form-help">Enter an Image URL or Upload File Below</p>
 						</div>
 
 						<div class="form-group">
-							<label for="imageFile" class="form-label">または画像をアップロード</label>
+							<label for="imageFile" class="form-label">Or Upload an Image</label>
 							<div class="file-input-wrapper">
 								<input
 									type="file"
@@ -348,10 +348,10 @@
 										<polyline points="17 8 12 3 7 8" />
 										<line x1="12" y1="3" x2="12" y2="15" />
 									</svg>
-									<span>{imageFile ? imageFile.name : 'ファイルを選択'}</span>
+									<span>{imageFile ? imageFile.name : 'Select File'}</span>
 								</label>
 							</div>
-							<p class="form-help">JPG, PNG, WEBP (最大5MB)</p>
+							<p class="form-help">JPG, PNG, WEBP (Max 5MB)</p>
 						</div>
 
 						<div class="form-actions">
@@ -361,10 +361,10 @@
 								onclick={fetchProfile}
 								disabled={saving}
 							>
-								リセット
+								Reset
 							</button>
 							<button type="submit" class="btn btn-primary" disabled={saving || uploading}>
-								{uploading ? 'アップロード中...' : saving ? '保存中...' : '保存する'}
+								{uploading ? 'Uploading...' : saving ? 'Saving...' : 'Save'}
 							</button>
 						</div>
 					</form>
@@ -373,7 +373,7 @@
 
 			<!-- Quick Links -->
 			<div class="quick-links profile-card">
-				<h3>クイック設定</h3>
+				<h3>Quick Settings</h3>
 				<div class="links-grid">
 					<a href="/change-password" class="quick-link">
 						<svg
@@ -388,8 +388,8 @@
 							<path d="M7 11V7a5 5 0 0 1 10 0v4" />
 						</svg>
 						<div>
-							<p class="link-title">パスワード変更</p>
-							<p class="link-description">セキュリティ設定を管理</p>
+							<p class="link-title">Change Password</p>
+							<p class="link-description">Manage and Change Security Settings</p>
 						</div>
 					</a>
 
@@ -408,8 +408,8 @@
 							<rect x="3" y="14" width="7" height="7" />
 						</svg>
 						<div>
-							<p class="link-title">ダッシュボード</p>
-							<p class="link-description">学習進捗を確認</p>
+							<p class="link-title">Dashboard</p>
+							<p class="link-description">Check Your Learning Progress</p>
 						</div>
 					</a>
 				</div>

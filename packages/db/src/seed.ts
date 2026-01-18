@@ -2,7 +2,6 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
 import { sql } from 'drizzle-orm';
-// Removed: import 'dotenv/config'; -> Handled by package.json script now!
 
 // Jisho API Types
 interface JishoResponse {
@@ -33,7 +32,7 @@ function shuffle<T>(array: T[]): T[] {
 }
 
 async function fetchFromJisho(jlptLevel: string) {
-  console.log(`📡 Fetching ${jlptLevel} data from Jisho.org...`);
+  console.log(`Fetching ${jlptLevel} data from Jisho.org...`);
   try {
     const response = await fetch(`https://jisho.org/api/v1/search/words?keyword=%23${jlptLevel}`);
     if (!response.ok) throw new Error(`Jisho API Error: ${response.statusText}`);

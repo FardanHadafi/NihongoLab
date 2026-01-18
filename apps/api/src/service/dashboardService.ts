@@ -7,7 +7,7 @@ import {
   userStats,
   DashboardData
 } from '@nihongolab/db';
-import { eq, sql, and, gte, count } from 'drizzle-orm';
+import { eq, sql, and, gte } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 
 export class DashboardService {

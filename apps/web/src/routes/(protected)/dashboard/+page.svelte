@@ -75,17 +75,6 @@
 			loading = false;
 		}
 	}
-
-	function formatDate(dateString: string): string {
-		const date = new Date(dateString);
-		const now = new Date();
-		const diffTime = Math.abs(now.getTime() - date.getTime());
-		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-		if (diffDays === 0) return '今日';
-		if (diffDays === 1) return '昨日';
-		return `${diffDays}日前`;
-	}
 </script>
 
 <Navbar />
@@ -115,7 +104,7 @@
 				<div class="level-header">
 					<div class="current-level">
 						<span class="level-label">Current Level</span>
-						<span class="level-name">{data.user.currentLevel?.name}</span>
+						<span class="level-name">{data.user.currentLevel?.name}Zero Knowledge</span>
 					</div>
 					{#if data.user.nextLevel}
 						<div class="next-level">

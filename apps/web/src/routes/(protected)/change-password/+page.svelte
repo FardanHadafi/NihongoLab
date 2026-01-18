@@ -38,9 +38,9 @@
 		if (/\d/.test(password)) score++;
 		if (/[^a-zA-Z0-9]/.test(password)) score++;
 
-		if (score <= 1) return { score, label: '弱い', color: '#dc2626' };
-		if (score <= 3) return { score, label: '普通', color: '#f59e0b' };
-		return { score, label: '強い', color: '#10b981' };
+		if (score <= 1) return { score, label: 'Weak', color: '#dc2626' };
+		if (score <= 3) return { score, label: 'Moderate', color: '#f59e0b' };
+		return { score, label: 'Strong', color: '#10b981' };
 	}
 
 	async function handleSubmit(event: Event) {
@@ -51,22 +51,22 @@
 
 		// Validation
 		if (!currentPassword || !newPassword || !confirmPassword) {
-			error = 'すべてのフィールドを入力してください';
+			error = 'Please Fill in All Fields';
 			return;
 		}
 
 		if (newPassword.length < 8) {
-			error = 'パスワードは8文字以上である必要があります';
+			error = 'Password Must Be At Least 8 Characters';
 			return;
 		}
 
 		if (newPassword !== confirmPassword) {
-			error = '新しいパスワードが一致しません';
+			error = 'New Password Doesn"t Match';
 			return;
 		}
 
 		if (currentPassword === newPassword) {
-			error = '新しいパスワードは現在のパスワードと異なる必要があります';
+			error = 'The New Password Must Be Different From The Current Password';
 			return;
 		}
 
@@ -88,10 +88,10 @@
 
 			if (!response.ok) {
 				const data = await response.json();
-				throw new Error(data.message || 'パスワードの変更に失敗しました');
+				throw new Error(data.message || 'Password Change Failed');
 			}
 
-			successMessage = 'パスワードが正常に変更されました！';
+			successMessage = 'Your Password Has Been Changed !';
 
 			// Clear form
 			currentPassword = '';
@@ -104,7 +104,7 @@
 			}, 5000);
 		} catch (err) {
 			console.error('Password change failed:', err);
-			error = err instanceof Error ? err.message : 'パスワードの変更に失敗しました';
+			error = err instanceof Error ? err.message : 'Password Change Failed';
 		} finally {
 			loading = false;
 		}
@@ -131,10 +131,10 @@
 				>
 					<path d="M19 12H5M12 19l-7-7 7-7" />
 				</svg>
-				<span>プロフィールに戻る</span>
+				<span>Return To Profile</span>
 			</a>
-			<h1>パスワード変更</h1>
-			<p class="subtitle">アカウントのセキュリティを強化</p>
+			<h1>Change Password</h1>
+			<p class="subtitle">Increase Your Account Security</p>
 		</div>
 
 		<div class="password-card">
@@ -176,14 +176,14 @@
 			<form onsubmit={handleSubmit}>
 				<!-- Current Password -->
 				<div class="form-group">
-					<label for="currentPassword" class="form-label">現在のパスワード *</label>
+					<label for="currentPassword" class="form-label">Current Password *</label>
 					<div class="password-input-wrapper">
 						<input
 							type={showCurrentPassword ? 'text' : 'password'}
 							id="currentPassword"
 							class="form-input"
 							bind:value={currentPassword}
-							placeholder="現在のパスワードを入力"
+							placeholder="Enter Current Password"
 							required
 						/>
 						<button
@@ -225,14 +225,14 @@
 
 				<!-- New Password -->
 				<div class="form-group">
-					<label for="newPassword" class="form-label">新しいパスワード *</label>
+					<label for="newPassword" class="form-label">New Password *</label>
 					<div class="password-input-wrapper">
 						<input
 							type={showNewPassword ? 'text' : 'password'}
 							id="newPassword"
 							class="form-input"
 							bind:value={newPassword}
-							placeholder="8文字以上の新しいパスワード"
+							placeholder="New Password At Least 8 Characters"
 							required
 						/>
 						<button
@@ -318,25 +318,25 @@
 					{/if}
 
 					<ul class="password-requirements">
-						<li class:met={newPassword.length >= 8}>8文字以上</li>
+						<li class:met={newPassword.length >= 8}>8 Characters or More</li>
 						<li class:met={/[a-z]/.test(newPassword) && /[A-Z]/.test(newPassword)}>
-							大文字と小文字を含む
+							Contains Uppercase and Lowercase Letters
 						</li>
-						<li class:met={/\d/.test(newPassword)}>数字を含む</li>
-						<li class:met={/[^a-zA-Z0-9]/.test(newPassword)}>特殊文字を含む</li>
+						<li class:met={/\d/.test(newPassword)}>Contains Numbers</li>
+						<li class:met={/[^a-zA-Z0-9]/.test(newPassword)}>Contains Special Characters</li>
 					</ul>
 				</div>
 
 				<!-- Confirm Password -->
 				<div class="form-group">
-					<label for="confirmPassword" class="form-label">新しいパスワード（確認） *</label>
+					<label for="confirmPassword" class="form-label">New Password (Confirm) *</label>
 					<div class="password-input-wrapper">
 						<input
 							type={showConfirmPassword ? 'text' : 'password'}
 							id="confirmPassword"
 							class="form-input"
 							bind:value={confirmPassword}
-							placeholder="もう一度入力してください"
+							placeholder="Type it Again"
 							required
 						/>
 						<button
@@ -375,16 +375,16 @@
 						</button>
 					</div>
 					{#if confirmPassword && newPassword !== confirmPassword}
-						<p class="error-text">パスワードが一致しません</p>
+						<p class="error-text">Passowrd Doesn't Match</p>
 					{/if}
 					{#if confirmPassword && newPassword === confirmPassword}
-						<p class="success-text">✓ パスワードが一致しています</p>
+						<p class="success-text">✓ Password Match</p>
 					{/if}
 				</div>
 
 				<!-- Submit Button -->
 				<div class="form-actions">
-					<a href="/profile" class="btn btn-secondary">キャンセル</a>
+					<a href="/profile" class="btn btn-secondary">Cancel</a>
 					<button
 						type="submit"
 						class="btn btn-primary"
@@ -394,19 +394,18 @@
 							!confirmPassword ||
 							newPassword !== confirmPassword}
 					>
-						{loading ? '変更中...' : 'パスワードを変更'}
+						{loading ? 'Changing...' : 'Change Password'}
 					</button>
 				</div>
 			</form>
 
 			<!-- Security Tips -->
 			<div class="security-tips">
-				<h3>🔒 セキュリティのヒント</h3>
+				<h3>Security Tips</h3>
 				<ul>
-					<li>定期的にパスワードを変更しましょう</li>
-					<li>他のサイトで使用しているパスワードは使わないでください</li>
-					<li>パスワードを他人と共有しないでください</li>
-					<li>二段階認証を有効にすることをお勧めします</li>
+					<li>Change Your Password Regularly</li>
+					<li>Don't Use Passwords You Use On Other Sites</li>
+					<li>Don't Share Your Password With Anyone</li>
 				</ul>
 			</div>
 		</div>
