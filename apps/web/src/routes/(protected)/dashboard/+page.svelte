@@ -104,7 +104,7 @@
 				<div class="level-header">
 					<div class="current-level">
 						<span class="level-label">Current Level</span>
-						<span class="level-name">{data.user.currentLevel?.name}Zero Knowledge</span>
+						<span class="level-name">{data.user.currentLevel?.name}</span>
 					</div>
 					{#if data.user.nextLevel}
 						<div class="next-level">
@@ -136,7 +136,7 @@
 				<div class="stat-icon">🔥</div>
 				<div class="stat-content">
 					<h3 class="stat-value">{data.stats.streak}</h3>
-					<p class="stat-label">Consecutive Days</p>
+					<p class="stat-label">Consecutive Streak</p>
 				</div>
 			</div>
 

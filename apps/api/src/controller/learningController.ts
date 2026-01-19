@@ -3,15 +3,12 @@ import { Hono } from 'hono';
 import { authMiddleware } from '@/middleware/auth.middleware';
 import z from 'zod';
 import { zValidator } from '@hono/zod-validator';
-import { db, levels, questions } from '@nihongolab/db';
+import { db, questions } from '@nihongolab/db';
 import { and, eq, sql } from 'drizzle-orm';
 
 const answerInputSchema = z.object({
   questionId: z.number(),
   answer: z.string()
-});
-const lessonCompleteSchema = z.object({
-  questionIds: z.array(z.number())
 });
 
 const learningController = new Hono();

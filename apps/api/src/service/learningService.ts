@@ -122,9 +122,9 @@ export class LearningService {
 
       const accuracy = total > 0 ? correct / total : 0;
 
-      let expEarned = 10;
-      if (accuracy === 1) expEarned = 50;
-      else if (accuracy >= 0.7) expEarned = 30;
+      let expEarned = 1;
+      if (accuracy === 1) expEarned = 1;
+      else if (accuracy >= 0.7) expEarned = 1;
 
       const updatedUser = await this.userRepository.addExp(tx, userId, expEarned);
 
