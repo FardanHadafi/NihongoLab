@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LessonResult, QuizQuestion } from '@nihongolab/db';
 	import { onMount } from 'svelte';
-	import '../../../../lib/style/hiragana.css';
+	import '../../../../lib/style/learning.css';
 
 	let questions: QuizQuestion[] = [];
 	let currentIndex = 0;

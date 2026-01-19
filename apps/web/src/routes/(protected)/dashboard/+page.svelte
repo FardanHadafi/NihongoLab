@@ -136,7 +136,7 @@
 				<div class="stat-icon">🔥</div>
 				<div class="stat-content">
 					<h3 class="stat-value">{data.stats.streak}</h3>
-					<p class="stat-label">Consecutive Streak</p>
+					<p class="stat-label">Consecutive Learning Streak</p>
 				</div>
 			</div>
 
