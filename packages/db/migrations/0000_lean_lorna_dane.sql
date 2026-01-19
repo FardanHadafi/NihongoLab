@@ -24,6 +24,7 @@ CREATE TABLE "questions" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"level_id" integer NOT NULL,
 	"script_type" text NOT NULL,
+	"question_type" text NOT NULL,
 	"question_text" text NOT NULL,
 	"correct_answer" text NOT NULL,
 	"options" jsonb NOT NULL

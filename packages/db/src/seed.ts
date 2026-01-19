@@ -4,7 +4,9 @@ import * as schema from './schema';
 import { sql } from 'drizzle-orm';
 import { HIRAGANA } from './lib/hiragana';
 import { KATAKANA } from './lib/katakana';
-import { JishoResponse } from './db.types';
+import N5_KANJI from './lib/N5.json';
+import N4_KANJI from './lib/N4.json';
+import { KanjiEntry } from './db.types';
 
 // Setup
 if (!process.env.DATABASE_URL) {
@@ -14,8 +16,7 @@ if (!process.env.DATABASE_URL) {
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema });
 
-// Helper
-
+// Helpers
 function shuffle<T>(array: T[]): T[] {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -27,15 +28,20 @@ function shuffle<T>(array: T[]): T[] {
 
 function buildOptions(correct: string, pool: string[], size: number) {
   const set = new Set<string>([correct]);
-  while (set.size < size) {
-    set.add(pool[Math.floor(Math.random() * pool.length)]);
+  const poolCopy = pool.filter((p) => p !== correct);
+
+  while (set.size < size && poolCopy.length > 0) {
+    const randomIndex = Math.floor(Math.random() * poolCopy.length);
+    set.add(poolCopy[randomIndex]);
   }
+
   return shuffle([...set]);
 }
 
-// Kana Seeding (Reading)
-
+// Kana Seeding
 async function seedKana(levelId: number) {
+  console.log(`\nSeeding Kana for Level ${levelId}`);
+
   const hiraganaReadings = HIRAGANA.map((h) => h[1]);
   const katakanaReadings = KATAKANA.map((k) => k[1]);
 
@@ -57,30 +63,58 @@ async function seedKana(levelId: number) {
     options: buildOptions(reading, katakanaReadings, 5)
   }));
 
-  await db.insert(schema.questions).values([...hiraganaQuestions, ...katakanaQuestions]);
+  await db.insert(schema.questions).values(hiraganaQuestions);
+  await db.insert(schema.questions).values(katakanaQuestions);
 
-  console.log(`Seeded ${hiraganaQuestions.length} Hiragana + ${katakanaQuestions.length} Katakana`);
+  console.log(
+    `✓ Seeded ${hiraganaQuestions.length} Hiragana + ${katakanaQuestions.length} Katakana`
+  );
 }
 
-// Jisho Fetch
+// Kanji Seeding
+async function seedKanji(levelId: number, kanjiList: KanjiEntry[]) {
+  console.log(`\nSeeding Kanji for Level ${levelId}`);
 
-async function fetchFromJisho(jlpt: string) {
-  const res = await fetch(`https://jisho.org/api/v1/search/words?keyword=%23${jlpt}`);
-  if (!res.ok) return [];
-  const json = (await res.json()) as JishoResponse;
-  return json.data;
+  const readingPool = kanjiList.map((k) => k.reading);
+  const meaningPool = kanjiList.map((k) => k.meaning);
+
+  const questions = kanjiList.flatMap((k) => [
+    {
+      levelId,
+      scriptType: 'kanji' as const,
+      questionType: 'reading' as const,
+      questionText: k.kanji,
+      correctAnswer: k.reading,
+      options: buildOptions(k.reading, readingPool, 5)
+    },
+    {
+      levelId,
+      scriptType: 'kanji' as const,
+      questionType: 'meaning' as const,
+      questionText: k.kanji,
+      correctAnswer: k.meaning,
+      options: buildOptions(k.meaning, meaningPool, 4)
+    }
+  ]);
+
+  const batchSize = 100;
+  for (let i = 0; i < questions.length; i += batchSize) {
+    await db.insert(schema.questions).values(questions.slice(i, i + batchSize));
+  }
+
+  console.log(`✓ Seeded ${questions.length} Kanji questions`);
 }
 
-// Main Seed
-
+// Main
 async function main() {
-  console.log('Seeding database...');
+  console.log('Starting database seeding...\n');
 
   const levels = [
-    { id: 1, name: 'jlpt-n5', requiredExp: 100 },
-    { id: 2, name: 'jlpt-n4', requiredExp: 200 }
+    { id: 1, name: 'jlpt-n5', requiredExp: 1000 },
+    { id: 2, name: 'jlpt-n4', requiredExp: 2000 }
   ];
 
+  console.log('Upserting levels...');
   await db
     .insert(schema.levels)
     .values(levels)
@@ -88,70 +122,37 @@ async function main() {
       target: schema.levels.id,
       set: { name: sql.raw('excluded.name') }
     });
+  console.log('✓ Levels upserted\n');
 
-  // Clear questions
+  console.log('Clearing existing questions...');
   await db.delete(schema.questions);
+  console.log('✓ Questions cleared\n');
 
-  // Seed kana at N5
+  // Kana (N5 only)
   await seedKana(1);
 
-  // Kanji Seeding
+  // Kanji (JSON-based)
+  await seedKanji(1, N5_KANJI);
+  await seedKanji(2, N4_KANJI);
 
-  for (const level of levels) {
-    const words = await fetchFromJisho(level.name);
-    if (!words.length) continue;
+  // Summary
+  console.log('\nSummary');
+  const counts = await db
+    .select({
+      scriptType: schema.questions.scriptType,
+      questionType: schema.questions.questionType,
+      count: sql<number>`count(*)`
+    })
+    .from(schema.questions)
+    .groupBy(schema.questions.scriptType, schema.questions.questionType);
 
-    const readingPool = words.map((w) => w.japanese[0]?.reading).filter(Boolean) as string[];
-
-    const meaningPool = words
-      .map((w) => w.senses[0]?.english_definitions[0])
-      .filter(Boolean) as string[];
-
-    const questions: any[] = [];
-
-    for (const w of words) {
-      const jp = w.japanese[0];
-      const kanji = jp?.word;
-      const reading = jp?.reading;
-      const meaning = w.senses[0]?.english_definitions[0];
-
-      if (!kanji || !reading || !meaning) continue;
-
-      // Reading Question
-      questions.push({
-        levelId: level.id,
-        scriptType: 'kanji',
-        questionType: 'reading',
-        questionText: kanji,
-        correctAnswer: reading,
-        options: buildOptions(reading, readingPool, 5)
-      });
-
-      // Meaning Question
-      questions.push({
-        levelId: level.id,
-        scriptType: 'kanji',
-        questionType: 'meaning',
-        questionText: kanji,
-        correctAnswer: meaning,
-        options: buildOptions(meaning, meaningPool, 4)
-      });
-    }
-
-    if (questions.length) {
-      await db.insert(schema.questions).values(questions);
-      console.log(`Seeded ${questions.length} Kanji questions for ${level.name}`);
-    }
-
-    await new Promise((r) => setTimeout(r, 1000));
-  }
-
-  console.log('Seeding complete');
+  console.table(counts);
+  console.log('\nSeeding complete!');
 }
 
 main()
   .catch((err) => {
-    console.error(err);
+    console.error('Seeding failed:', err);
     process.exit(1);
   })
   .finally(async () => {

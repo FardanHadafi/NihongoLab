@@ -1,1 +1,0 @@
-ALTER TABLE "questions" ADD COLUMN "question_type" text NOT NULL;

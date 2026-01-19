@@ -1,5 +1,5 @@
 {
-  "id": "0d3d3275-efc9-48f8-a090-9ba5d68ee99f",
+  "id": "6bb59f1b-b6b5-4775-878a-e4c6c6184eb6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -175,6 +175,12 @@
         },
         "script_type": {
           "name": "script_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "question_type": {
+          "name": "question_type",
           "type": "text",
           "primaryKey": false,
           "notNull": true

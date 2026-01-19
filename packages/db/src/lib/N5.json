@@ -1,0 +1,100 @@
+[
+  { "kanji": "一", "reading": "いち", "meaning": "one" },
+  { "kanji": "二", "reading": "に", "meaning": "two" },
+  { "kanji": "三", "reading": "さん", "meaning": "three" },
+  { "kanji": "四", "reading": "よん", "meaning": "four" },
+  { "kanji": "五", "reading": "ご", "meaning": "five" },
+  { "kanji": "六", "reading": "ろく", "meaning": "six" },
+  { "kanji": "七", "reading": "なな", "meaning": "seven" },
+  { "kanji": "八", "reading": "はち", "meaning": "eight" },
+  { "kanji": "九", "reading": "きゅう", "meaning": "nine" },
+  { "kanji": "十", "reading": "じゅう", "meaning": "ten" },
+
+  { "kanji": "百", "reading": "ひゃく", "meaning": "hundred" },
+  { "kanji": "千", "reading": "せん", "meaning": "thousand" },
+  { "kanji": "万", "reading": "まん", "meaning": "ten thousand" },
+
+  { "kanji": "日", "reading": "ひ", "meaning": "day, sun" },
+  { "kanji": "月", "reading": "つき", "meaning": "month, moon" },
+  { "kanji": "火", "reading": "ひ", "meaning": "fire" },
+  { "kanji": "水", "reading": "みず", "meaning": "water" },
+  { "kanji": "木", "reading": "き", "meaning": "tree" },
+  { "kanji": "金", "reading": "かね", "meaning": "money, gold" },
+  { "kanji": "土", "reading": "つち", "meaning": "earth" },
+
+  { "kanji": "人", "reading": "ひと", "meaning": "person" },
+  { "kanji": "男", "reading": "おとこ", "meaning": "man" },
+  { "kanji": "女", "reading": "おんな", "meaning": "woman" },
+  { "kanji": "子", "reading": "こ", "meaning": "child" },
+
+  { "kanji": "山", "reading": "やま", "meaning": "mountain" },
+  { "kanji": "川", "reading": "かわ", "meaning": "river" },
+  { "kanji": "田", "reading": "た", "meaning": "rice field" },
+
+  { "kanji": "口", "reading": "くち", "meaning": "mouth" },
+  { "kanji": "目", "reading": "め", "meaning": "eye" },
+  { "kanji": "耳", "reading": "みみ", "meaning": "ear" },
+  { "kanji": "手", "reading": "て", "meaning": "hand" },
+  { "kanji": "足", "reading": "あし", "meaning": "foot, leg" },
+
+  { "kanji": "上", "reading": "うえ", "meaning": "up, above" },
+  { "kanji": "下", "reading": "した", "meaning": "down, below" },
+  { "kanji": "中", "reading": "なか", "meaning": "inside, middle" },
+  { "kanji": "外", "reading": "そと", "meaning": "outside" },
+
+  { "kanji": "大", "reading": "おおきい", "meaning": "big" },
+  { "kanji": "小", "reading": "ちいさい", "meaning": "small" },
+  { "kanji": "長", "reading": "ながい", "meaning": "long" },
+  { "kanji": "高", "reading": "たかい", "meaning": "tall, expensive" },
+  { "kanji": "安", "reading": "やすい", "meaning": "cheap, safe" },
+
+  { "kanji": "新", "reading": "あたらしい", "meaning": "new" },
+  { "kanji": "古", "reading": "ふるい", "meaning": "old" },
+
+  { "kanji": "学", "reading": "まなぶ", "meaning": "study" },
+  { "kanji": "校", "reading": "こう", "meaning": "school" },
+  { "kanji": "生", "reading": "いきる", "meaning": "life, live" },
+  { "kanji": "先", "reading": "さき", "meaning": "previous, ahead" },
+
+  { "kanji": "友", "reading": "とも", "meaning": "friend" },
+  { "kanji": "名", "reading": "な", "meaning": "name" },
+  { "kanji": "年", "reading": "とし", "meaning": "year" },
+  { "kanji": "時", "reading": "とき", "meaning": "time" },
+
+  { "kanji": "本", "reading": "ほん", "meaning": "book" },
+  { "kanji": "語", "reading": "ご", "meaning": "language, word" },
+  { "kanji": "文", "reading": "ぶん", "meaning": "sentence, text" },
+
+  { "kanji": "行", "reading": "いく", "meaning": "go" },
+  { "kanji": "来", "reading": "くる", "meaning": "come" },
+  { "kanji": "帰", "reading": "かえる", "meaning": "return home" },
+
+  { "kanji": "見", "reading": "みる", "meaning": "see" },
+  { "kanji": "聞", "reading": "きく", "meaning": "listen, hear" },
+  { "kanji": "話", "reading": "はなす", "meaning": "speak" },
+  { "kanji": "読", "reading": "よむ", "meaning": "read" },
+  { "kanji": "書", "reading": "かく", "meaning": "write" },
+
+  { "kanji": "食", "reading": "たべる", "meaning": "eat" },
+  { "kanji": "飲", "reading": "のむ", "meaning": "drink" },
+
+  { "kanji": "休", "reading": "やすむ", "meaning": "rest" },
+  { "kanji": "入", "reading": "はいる", "meaning": "enter" },
+  { "kanji": "出", "reading": "でる", "meaning": "exit" },
+
+  { "kanji": "立", "reading": "たつ", "meaning": "stand" },
+  { "kanji": "座", "reading": "すわる", "meaning": "sit" },
+
+  { "kanji": "電", "reading": "でん", "meaning": "electricity" },
+  { "kanji": "車", "reading": "くるま", "meaning": "car" },
+  { "kanji": "駅", "reading": "えき", "meaning": "station" },
+
+  { "kanji": "天", "reading": "てん", "meaning": "heaven" },
+  { "kanji": "気", "reading": "き", "meaning": "spirit, air" },
+
+  { "kanji": "白", "reading": "しろ", "meaning": "white" },
+  { "kanji": "黒", "reading": "くろ", "meaning": "black" },
+
+  { "kanji": "雨", "reading": "あめ", "meaning": "rain" },
+  { "kanji": "空", "reading": "そら", "meaning": "sky" }
+]

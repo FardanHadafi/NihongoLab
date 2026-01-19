@@ -60,12 +60,11 @@ export interface UserProfile {
   requiredExp: number | null;
 }
 
-export interface JishoResponse {
-  data: Array<{
-    japanese: Array<{ word?: string; reading: string }>;
-    senses: Array<{ english_definitions: string[] }>;
-  }>;
-}
+export type KanjiEntry = {
+  kanji: string;
+  reading: string;
+  meaning: string;
+};
 
 export type QuizQuestion = {
   id: number;

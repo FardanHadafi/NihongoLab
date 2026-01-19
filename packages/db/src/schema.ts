@@ -12,7 +12,6 @@ import {
 } from 'drizzle-orm/pg-core';
 
 // USERS
-
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -32,7 +31,6 @@ export const users = pgTable('users', {
 });
 
 // AUTH TABLES (better-auth)
-
 export const session = pgTable(
   'session',
   {
@@ -102,7 +100,6 @@ export const verification = pgTable(
 );
 
 // LEVELS (JLPT)
-
 export const levels = pgTable('levels', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(), // N5, N4, ...
@@ -110,7 +107,6 @@ export const levels = pgTable('levels', {
 });
 
 // QUESTIONS
-
 export const questions = pgTable(
   'questions',
   {
@@ -131,7 +127,6 @@ export const questions = pgTable(
 );
 
 // USER QUESTION PROGRESS
-
 export const userProgress = pgTable(
   'user_progress',
   {
@@ -173,7 +168,6 @@ export const userProgress = pgTable(
 );
 
 // USER DASHBOARD STATS
-
 export const userStats = pgTable('user_stats', {
   userId: text('user_id')
     .primaryKey()
@@ -194,7 +188,6 @@ export const usersRelations = relations(users, ({ one }) => ({
 }));
 
 // VOCABULARY
-
 export const vocabulary = pgTable(
   'vocabulary',
   {
@@ -210,7 +203,6 @@ export const vocabulary = pgTable(
 );
 
 // TYPES
-
 export type User = InferSelectModel<typeof users>;
 export type Question = InferSelectModel<typeof questions>;
 export type UserProgress = InferSelectModel<typeof userProgress>;
