@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { LessonResult, QuizQuestion } from '@nihongolab/db';
 	import { onMount } from 'svelte';
-	import '../../../../lib/style/learning.css';
 
 	let questions: QuizQuestion[] = [];
 	let currentIndex = 0;
@@ -11,7 +10,7 @@
 
 	let lessonResult: LessonResult | null = null;
 
-	// ---------- LESSON FLOW ----------
+	// LESSON FLOW
 	async function startLesson() {
 		loading = true;
 		finished = false;
@@ -33,7 +32,7 @@
 
 	$: current = questions[currentIndex];
 
-	// ---------- ANSWER ----------
+	// ANSWER
 	async function selectOption(option: string) {
 		if (selected || !current) return;
 
@@ -61,7 +60,7 @@
 		}, 700);
 	}
 
-	// ---------- COMPLETE ----------
+	// COMPLETE
 	async function completeLesson() {
 		const res = await fetch('/api/learn/complete', {
 			method: 'POST',
@@ -125,3 +124,136 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	/* GENERAL */
+	* {
+		padding: 0;
+		margin: 0;
+		box-sizing: border-box;
+	}
+
+	.loading {
+		margin-top: 2.5rem;
+		text-align: center;
+		font-size: 1rem;
+		color: #444;
+	}
+
+	/* QUIZ */
+	.quiz {
+		max-width: 420px;
+		margin: 2.5rem auto;
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.quiz-progress {
+		font-size: 0.85rem;
+		color: #777;
+	}
+
+	.quiz-character {
+		text-align: center;
+		font-size: 4.5rem;
+		font-weight: bold;
+	}
+
+	/* OPTIONS */
+	.options-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1rem;
+	}
+
+	.option {
+		padding: 0.75rem;
+		font-size: 1.1rem;
+		border-radius: 0.5rem;
+		border: 2px solid #ddd;
+		background: #fff;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.option:hover:not(:disabled) {
+		background: #f5f5f5;
+	}
+
+	.option:disabled {
+		cursor: not-allowed;
+		opacity: 0.9;
+	}
+
+	/* FEEDBACK */
+	.option.correct {
+		background: #dcfce7;
+		border-color: #22c55e;
+		color: #166534;
+	}
+
+	.option.wrong {
+		background: #fee2e2;
+		border-color: #ef4444;
+		color: #7f1d1d;
+	}
+
+	/* RESULT */
+	.result {
+		max-width: 420px;
+		margin: 2.5rem auto;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.result-title {
+		font-size: 2rem;
+		font-weight: bold;
+	}
+
+	.result-score {
+		font-size: 1.1rem;
+	}
+
+	.result-xp {
+		font-size: 1.3rem;
+		font-weight: bold;
+		color: #16a34a;
+	}
+
+	/* BUTTON */
+	.btn-primary {
+		display: block;
+		width: 100%;
+		padding: 0.75rem;
+		border-radius: 0.5rem;
+		background: #2563eb;
+		color: white;
+		text-decoration: none;
+		font-weight: 600;
+		transition: background 0.2s ease;
+	}
+
+	.btn-primary:hover {
+		background: #1d4ed8;
+	}
+
+	.btn-secondary {
+		display: block;
+		width: 100%;
+		padding: 0.75rem;
+		border-radius: 0.5rem;
+		background: #2563eb;
+		color: white;
+		text-decoration: none;
+		font-weight: 600;
+		transition: background 0.2s ease;
+	}
+
+	.btn-secondary:hover {
+		background: #1d4ed8;
+	}
+</style>

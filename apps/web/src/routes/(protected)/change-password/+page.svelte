@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
-	import '../../../lib/style/changePassword.css';
 
 	let currentPassword = $state('');
 	let newPassword = $state('');
@@ -411,3 +410,297 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	* {
+		padding: 0;
+		margin: 0;
+		box-sizing: border-box;
+	}
+
+	.password-page {
+		min-height: 100vh;
+		background: #f9fafb;
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		padding: 2rem;
+	}
+
+	.password-container {
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.password-header {
+		margin-bottom: 2rem;
+	}
+
+	.back-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: #667eea;
+		text-decoration: none;
+		font-weight: 500;
+		margin-bottom: 1rem;
+		transition: all 0.2s;
+	}
+
+	.back-link:hover {
+		gap: 0.75rem;
+	}
+
+	.password-header h1 {
+		font-size: 2rem;
+		font-weight: 700;
+		color: #1a1a1a;
+		margin-bottom: 0.5rem;
+	}
+
+	.subtitle {
+		color: #666;
+		font-size: 1rem;
+	}
+
+	.password-card {
+		background: white;
+		border-radius: 16px;
+		padding: 2rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	}
+
+	/* Form */
+	.form-group {
+		margin-bottom: 1.5rem;
+	}
+
+	.form-label {
+		display: block;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: #1a1a1a;
+		margin-bottom: 0.5rem;
+	}
+
+	.password-input-wrapper {
+		position: relative;
+	}
+
+	.form-input {
+		width: 87%;
+		padding: 0.75rem 3rem 0.75rem 1rem;
+		border: 2px solid #e5e7eb;
+		border-radius: 8px;
+		font-size: 1rem;
+		transition: all 0.2s;
+	}
+
+	.form-input:focus {
+		outline: none;
+		border-color: #667eea;
+		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+	}
+
+	.toggle-password {
+		position: absolute;
+		right: 0.75rem;
+		top: 50%;
+		transform: translateY(-50%);
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: #9ca3af;
+		padding: 0.5rem;
+		transition: color 0.2s;
+	}
+
+	.toggle-password:hover {
+		color: #667eea;
+	}
+
+	/* Password Strength */
+	.password-strength {
+		margin-top: 0.75rem;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.strength-bars {
+		flex: 1;
+		display: flex;
+		gap: 0.25rem;
+	}
+
+	.strength-bar {
+		flex: 1;
+		height: 4px;
+		background: #e5e7eb;
+		border-radius: 2px;
+		transition: all 0.3s;
+	}
+
+	.strength-label {
+		font-size: 0.875rem;
+		font-weight: 600;
+	}
+
+	/* Password Requirements */
+	.password-requirements {
+		list-style: none;
+		padding: 0;
+		margin: 0.75rem 0 0;
+	}
+
+	.password-requirements li {
+		font-size: 0.875rem;
+		color: #9ca3af;
+		padding: 0.25rem 0;
+		padding-left: 1.5rem;
+		position: relative;
+	}
+
+	.password-requirements li::before {
+		content: '○';
+		position: absolute;
+		left: 0;
+	}
+
+	.password-requirements li.met {
+		color: #10b981;
+	}
+
+	.password-requirements li.met::before {
+		content: '✓';
+	}
+
+	.error-text,
+	.success-text {
+		font-size: 0.875rem;
+		margin: 0.5rem 0 0;
+	}
+
+	.error-text {
+		color: #dc2626;
+	}
+
+	.success-text {
+		color: #10b981;
+	}
+
+	/* Messages */
+	.success-message,
+	.error-message {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 1rem;
+		border-radius: 8px;
+		margin-bottom: 1.5rem;
+	}
+
+	.success-message {
+		background: #d1fae5;
+		color: #065f46;
+	}
+
+	.error-message {
+		background: #fee2e2;
+		color: #991b1b;
+	}
+
+	/* Form Actions */
+	.form-actions {
+		display: flex;
+		gap: 1rem;
+		margin-top: 2rem;
+	}
+
+	.btn {
+		flex: 1;
+		padding: 0.75rem 1.5rem;
+		border-radius: 8px;
+		font-size: 1rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.2s;
+		border: none;
+		text-decoration: none;
+		text-align: center;
+	}
+
+	.btn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	.btn-primary {
+		background: linear-gradient(135deg, #dc2626 0%, #f97316 50%, #ec4899 100%);
+		color: white;
+	}
+
+	.btn-primary:hover:not(:disabled) {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+	}
+
+	.btn-secondary {
+		background: white;
+		color: #4b5563;
+		border: 2px solid #e5e7eb;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.btn-secondary:hover {
+		background: #f9fafb;
+	}
+
+	/* Security Tips */
+	.security-tips {
+		margin-top: 2rem;
+		padding: 1.5rem;
+		background: #f9fafb;
+		border-radius: 12px;
+	}
+
+	.security-tips h3 {
+		font-size: 1rem;
+		font-weight: 600;
+		color: #1a1a1a;
+		margin-bottom: 1rem;
+	}
+
+	.security-tips ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.security-tips li {
+		font-size: 0.875rem;
+		color: #666;
+		padding: 0.5rem 0;
+		padding-left: 1.5rem;
+		position: relative;
+	}
+
+	.security-tips li::before {
+		content: '•';
+		position: absolute;
+		left: 0;
+		color: #667eea;
+		font-weight: bold;
+	}
+
+	/* Responsive */
+	@media (max-width: 768px) {
+		.password-page {
+			padding: 1rem;
+		}
+
+		.form-actions {
+			flex-direction: column;
+		}
+	}
+</style>
