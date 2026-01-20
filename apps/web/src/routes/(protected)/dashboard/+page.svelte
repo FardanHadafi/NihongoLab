@@ -208,10 +208,10 @@
 		<section class="quick-actions">
 			<h2>Quick Action</h2>
 			<div class="actions-grid">
-				<a href="/practice" class="action-btn stat-card">
+				<!-- <a href="/practice" class="action-btn stat-card">
 					<span class="action-icon">📚</span>
 					<span class="action-text">Start Practicing</span>
-				</a>
+				</a> -->
 
 				{#if data.questionsNeedingReview > 0}
 					<a href="/review" class="action-btn stat-card review-btn">

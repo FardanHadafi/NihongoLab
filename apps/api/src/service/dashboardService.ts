@@ -7,8 +7,14 @@ import {
   userStats,
   DashboardData
 } from '@nihongolab/db';
-import { eq, sql, and, gte } from 'drizzle-orm';
+import { eq, sql, and, gte, desc, isNull, lte, or } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
+
+function addDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
 
 export class DashboardService {
   async getDashboard(userId: string): Promise<DashboardData> {
@@ -36,16 +42,12 @@ export class DashboardService {
 
     // Get next level
     const nextLevel = await this.getNextLevel(user.levelId);
-
     // Fetch user statistics
     const statsData = await this.getUserStats(userId);
-
     // Fetch level progress breakdown
     const levelProgressData = await this.getLevelProgress(userId);
-
     // Fetch recent activity (last 7 days)
     const recentActivityData = await this.getRecentActivity(userId);
-
     // Fetch mastered and needs review counts
     const masteredCount = await this.getQuestionsMastered(userId);
     const needsReviewCount = await this.getQuestionsNeedingReview(userId);
@@ -86,7 +88,7 @@ export class DashboardService {
     };
   }
 
-  private async getUserStats(userId: string) {
+  async getUserStats(userId: string) {
     // Try to get from userStats table first
     const [stats] = await db.select().from(userStats).where(eq(userStats.userId, userId)).limit(1);
 
@@ -112,7 +114,7 @@ export class DashboardService {
     };
   }
 
-  private async getLevelProgress(userId: string) {
+  async getLevelProgress(userId: string) {
     // Get all levels
     const allLevels = await db.select().from(levels).orderBy(levels.id);
 
@@ -153,7 +155,63 @@ export class DashboardService {
     return levelProgressData;
   }
 
-  private async getRecentActivity(userId: string) {
+  async answerReviewQuestion(userId: string, questionId: number, userAnswer: string) {
+    const [row] = await db
+      .select({
+        progressId: userProgress.id,
+        correctAnswer: questions.correctAnswer,
+        isCorrect: userProgress.isCorrect,
+        attempts: userProgress.attempts,
+        easeFactor: userProgress.easeFactor
+      })
+      .from(userProgress)
+      .innerJoin(questions, eq(userProgress.questionId, questions.id))
+      .where(and(eq(userProgress.userId, userId), eq(userProgress.questionId, questionId)))
+      .limit(1);
+
+    if (!row) {
+      throw new HTTPException(404, { message: 'Progress not found' });
+    }
+
+    // Normalize
+    const normalizedUser = userAnswer.trim();
+    const normalizedCorrect = row.correctAnswer.trim();
+    const isCorrect = normalizedUser === normalizedCorrect;
+    const currentEase = row.easeFactor ?? 250;
+
+    let nextEase = currentEase;
+    let intervalDays = 1;
+
+    if (isCorrect) {
+      nextEase = Math.min(currentEase + 10, 300);
+      intervalDays = Math.max(1, Math.round(nextEase / 100));
+    } else {
+      nextEase = Math.max(currentEase - 20, 130);
+      intervalDays = 1;
+    }
+
+    const nextReviewAt = addDays(new Date(), intervalDays);
+
+    await db
+      .update(userProgress)
+      .set({
+        isCorrect: row.isCorrect || isCorrect,
+        attempts: row.attempts + 1,
+        lastAttemptedAt: new Date(),
+        nextReviewAt,
+        easeFactor: nextEase
+      })
+      .where(eq(userProgress.id, row.progressId));
+
+    return {
+      isCorrect,
+      correctAnswer: row.correctAnswer,
+      nextReviewAt,
+      easeFactor: nextEase
+    };
+  }
+
+  async getRecentActivity(userId: string) {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -186,7 +244,7 @@ export class DashboardService {
     return result;
   }
 
-  private async getQuestionsMastered(userId: string): Promise<number> {
+  async getQuestionsMastered(userId: string): Promise<number> {
     const [result] = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(userProgress)
@@ -195,7 +253,7 @@ export class DashboardService {
     return result?.count || 0;
   }
 
-  private async getQuestionsNeedingReview(userId: string): Promise<number> {
+  async getQuestionsNeedingReview(userId: string): Promise<number> {
     // Questions with multiple attempts OR questions answered incorrectly
     const [result] = await db
       .select({ count: sql<number>`count(*)::int` })
@@ -210,7 +268,59 @@ export class DashboardService {
     return result?.count || 0;
   }
 
-  private async getNextLevel(currentLevelId: number | null) {
+  async getReviewQuestions(userId: string) {
+    return db
+      .select({
+        progressId: userProgress.id,
+        questionId: questions.id,
+
+        // Question data (NO correct answer)
+        levelId: questions.levelId,
+        scriptType: questions.scriptType,
+        questionType: questions.questionType,
+        questionText: questions.questionText,
+        options: questions.options,
+
+        // Progress data
+        attempts: userProgress.attempts,
+        isCorrect: userProgress.isCorrect,
+        answeredAt: userProgress.answeredAt,
+        lastAttemptedAt: userProgress.lastAttemptedAt,
+        nextReviewAt: userProgress.nextReviewAt,
+        easeFactor: userProgress.easeFactor
+      })
+      .from(userProgress)
+      .innerJoin(questions, eq(userProgress.questionId, questions.id))
+      .where(
+        and(
+          eq(userProgress.userId, userId),
+          or(
+            // Legacy review logic
+            sql`${userProgress.attempts} > 1 OR ${userProgress.isCorrect} = false`,
+            // SRS-ready logic
+            and(isNull(userProgress.nextReviewAt), eq(userProgress.isCorrect, false)),
+            lte(userProgress.nextReviewAt, new Date())
+          )
+        )
+      )
+      .orderBy(desc(userProgress.nextReviewAt), desc(userProgress.lastAttemptedAt))
+      .limit(20);
+  }
+
+  async getKanjiQuestionsByLevel(level: 'N5' | 'N4') {
+    return await db
+      .select({
+        id: questions.id,
+        questionText: questions.questionText,
+        options: questions.options,
+        scriptType: questions.scriptType
+      })
+      .from(questions)
+      .innerJoin(levels, eq(questions.levelId, levels.id))
+      .where(eq(levels.name, level));
+  }
+
+  async getNextLevel(currentLevelId: number | null) {
     if (!currentLevelId) {
       // If no current level, return the first level (N5)
       const [firstLevel] = await db.select().from(levels).orderBy(levels.id).limit(1);

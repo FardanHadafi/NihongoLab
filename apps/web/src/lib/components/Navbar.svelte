@@ -61,6 +61,40 @@
 		showMobileMenu = false;
 	}
 
+	let kanjiOpen = false;
+	let kanjiTimeout: ReturnType<typeof setTimeout> | null = null;
+
+	function toggleKanji() {
+		kanjiOpen = !kanjiOpen;
+		if (kanjiTimeout) {
+			clearTimeout(kanjiTimeout);
+			kanjiTimeout = null;
+		}
+	}
+
+	function handleKanjiMouseLeave() {
+		if (kanjiOpen) {
+			kanjiTimeout = setTimeout(() => {
+				kanjiOpen = false;
+			}, 500); // 500ms delay before closing
+		}
+	}
+
+	function handleKanjiMouseEnter() {
+		if (kanjiTimeout) {
+			clearTimeout(kanjiTimeout);
+			kanjiTimeout = null;
+		}
+	}
+
+	function closeKanji() {
+		kanjiOpen = false;
+		if (kanjiTimeout) {
+			clearTimeout(kanjiTimeout);
+			kanjiTimeout = null;
+		}
+	}
+
 	async function handleLogout() {
 		if (isLoggingOut) return;
 
@@ -130,10 +164,24 @@
 				<span class="nav-icon">ア</span>
 				<span>Katakana</span>
 			</a>
-			<a href="/learn/kanji" class="nav-link">
-				<span class="nav-icon">漢</span>
-				<span>Kanji</span>
-			</a>
+			<!-- Kanji Dropdown -->
+			<div class="nav-link kanji-dropdown" onmouseleave={handleKanjiMouseLeave} onmouseenter={handleKanjiMouseEnter}>
+				<button class="kanji-trigger" onclick={toggleKanji}>
+					<span class="nav-icon">漢</span>
+					<span>Kanji</span>
+					<span class="caret">▾</span>
+				</button>
+				{#if kanjiOpen}
+					<div class="dropdown-menu">
+						<a href="/learn/kanji/N5" class="dropdown-item" onclick={closeKanji}>
+							N5 Kanji
+						</a>
+						<a href="/learn/kanji/N4" class="dropdown-item" onclick={closeKanji}>
+							N4 Kanji
+						</a>
+					</div>
+				{/if}
+			</div>
 		</div>
 
 		<!-- Mobile Menu Button -->
@@ -290,6 +338,51 @@
 		gap: 2rem;
 	}
 
+	.kanji-dropdown {
+		position: relative;
+	}
+
+	.kanji-trigger {
+		background: none;
+		border: none;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		cursor: pointer;
+		font: inherit;
+		color: inherit;
+		padding: 0;
+	}
+
+	.dropdown-menu {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		background: white;
+		border-radius: 0.5rem;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+		padding: 0.5rem;
+		min-width: 120px;
+		z-index: 50;
+		margin-top: 0.5rem;
+	}
+
+	.dropdown-item {
+		display: block;
+		padding: 0.5rem 0.75rem;
+		border-radius: 0.375rem;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.dropdown-item:hover {
+		background: #f3f4f6;
+	}
+
+	.caret {
+		font-size: 0.75rem;
+	}
+
 	/* Logo */
 	.logo {
 		display: flex;
@@ -299,12 +392,7 @@
 		font-weight: 700;
 		font-size: 1.5rem;
 		color: #1a1a1a;
-		/* transition: transform 0.2s; */
 	}
-
-	/* .logo:hover {
-	transform: scale(1.05);
-} */
 
 	.logo-jp {
 		font-size: 24px;
@@ -324,10 +412,14 @@
 		display: flex;
 		gap: 32px;
 		align-items: center;
-		transition: all 0.3s ease;
+		flex: 1;
+		justify-content: center;
 	}
 
-	.nav-links a {
+	.nav-link {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 		color: #475569;
 		text-decoration: none;
 		font-size: 15px;
@@ -336,7 +428,7 @@
 		position: relative;
 	}
 
-	.nav-links a::after {
+	.nav-link::after {
 		content: '';
 		position: absolute;
 		bottom: -4px;
@@ -347,11 +439,11 @@
 		transition: width 0.3s ease;
 	}
 
-	.nav-links a:hover {
+	.nav-link:hover {
 		color: #dc2626;
 	}
 
-	.nav-links a:hover::after {
+	.nav-link:hover::after {
 		width: 100%;
 	}
 
@@ -378,6 +470,8 @@
 	/* Profile Section */
 	.profile-section {
 		position: relative;
+		display: flex;
+		align-items: center;
 	}
 
 	.profile-button {
@@ -394,7 +488,7 @@
 
 	.profile-button:hover {
 		color: #dc2626;
-		box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+		box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
 	}
 
 	.profile-image,
@@ -501,7 +595,7 @@
 		margin: 0.5rem 0;
 	}
 
-	.dropdown-item {
+	.profile-dropdown .dropdown-item {
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
@@ -519,21 +613,21 @@
 		text-align: left;
 	}
 
-	.dropdown-item:hover {
+	.profile-dropdown .dropdown-item:hover {
 		background: #f3f4f6;
 		color: #1a1a1a;
 	}
 
-	.dropdown-item.logout {
+	.profile-dropdown .dropdown-item.logout {
 		color: #dc2626;
 	}
 
-	.dropdown-item.logout:hover {
+	.profile-dropdown .dropdown-item.logout:hover {
 		background: #fee2e2;
 		color: #dc2626;
 	}
 
-	.dropdown-item:disabled {
+	.profile-dropdown .dropdown-item:disabled {
 		opacity: 0.6;
 		cursor: not-allowed;
 	}
@@ -562,7 +656,7 @@
 
 	.mobile-link:hover {
 		background: #f3f4f6;
-		color: #667eea;
+		color: #dc2626;
 	}
 
 	/* Responsive */
@@ -583,10 +677,6 @@
 		.mobile-menu {
 			display: flex;
 		}
-
-		/* .logo-text {
-			display: none;
-		} */
 
 		.profile-dropdown {
 			right: -1rem;
