@@ -8,7 +8,7 @@ import learningController from './controller/learningController';
 import { serve } from '@hono/node-server';
 import dashboardController from './controller/dashboardController';
 import { serveStatic } from '@hono/node-server/serve-static';
-import vocabController from './controller/vocabularyController';
+import { vocabularyController } from './controller/vocabularyController';
 
 const app = new Hono().basePath('/api');
 
@@ -59,7 +59,7 @@ app.on(['POST', 'GET'], '/auth/**', (c) => {
 app.route('/users', userController); // /api/users/me
 app.route('/learn', learningController); // /api/learn/submit
 app.route('/dashboard', dashboardController);
-app.route('/vocabulary', vocabController);
+app.route('/vocabulary', vocabularyController);
 
 // Upload Image
 app.use('/uploads/*', serveStatic({ root: './public' }));
