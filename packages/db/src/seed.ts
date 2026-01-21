@@ -2,13 +2,15 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
 import { sql } from 'drizzle-orm';
+
 import { HIRAGANA } from './lib/hiragana';
 import { KATAKANA } from './lib/katakana';
 import N5_KANJI from './lib/N5.json';
 import N4_KANJI from './lib/N4.json';
 import { KanjiEntry } from './db.types';
 
-// Setup
+/* -------------------- SETUP -------------------- */
+
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is missing');
 }
@@ -16,7 +18,8 @@ if (!process.env.DATABASE_URL) {
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema });
 
-// Helpers
+/* -------------------- HELPERS -------------------- */
+
 function shuffle<T>(array: T[]): T[] {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -31,19 +34,20 @@ function buildOptions(correct: string, pool: string[], size: number) {
   const poolCopy = pool.filter((p) => p !== correct);
 
   while (set.size < size && poolCopy.length > 0) {
-    const randomIndex = Math.floor(Math.random() * poolCopy.length);
-    set.add(poolCopy[randomIndex]);
+    const i = Math.floor(Math.random() * poolCopy.length);
+    set.add(poolCopy[i]);
   }
 
   return shuffle([...set]);
 }
 
-// Kana Seeding
-async function seedKana(levelId: number) {
-  console.log(`\nSeeding Kana for Level ${levelId}`);
+/* -------------------- KANA SEEDING -------------------- */
 
-  const hiraganaReadings = HIRAGANA.map((h) => h[1]);
-  const katakanaReadings = KATAKANA.map((k) => k[1]);
+async function seedKana(levelId: number) {
+  console.log(`\nSeeding Kana (Level ${levelId})`);
+
+  const hiraPool = HIRAGANA.map((h) => h[1]);
+  const kataPool = KATAKANA.map((k) => k[1]);
 
   const hiraganaQuestions = HIRAGANA.map(([char, reading]) => ({
     levelId,
@@ -51,7 +55,7 @@ async function seedKana(levelId: number) {
     questionType: 'reading' as const,
     questionText: char,
     correctAnswer: reading,
-    options: buildOptions(reading, hiraganaReadings, 5)
+    options: buildOptions(reading, hiraPool, 5)
   }));
 
   const katakanaQuestions = KATAKANA.map(([char, reading]) => ({
@@ -60,40 +64,54 @@ async function seedKana(levelId: number) {
     questionType: 'reading' as const,
     questionText: char,
     correctAnswer: reading,
-    options: buildOptions(reading, katakanaReadings, 5)
+    options: buildOptions(reading, kataPool, 5)
   }));
 
   await db.insert(schema.questions).values(hiraganaQuestions);
   await db.insert(schema.questions).values(katakanaQuestions);
 
-  console.log(
-    `✓ Seeded ${hiraganaQuestions.length} Hiragana + ${katakanaQuestions.length} Katakana`
-  );
+  console.log(`✓ Seeded ${hiraganaQuestions.length} Hiragana`);
+  console.log(`✓ Seeded ${katakanaQuestions.length} Katakana`);
 }
 
-// Kanji Seeding
+/* -------------------- KANJI SEEDING -------------------- */
+
 async function seedKanji(levelId: number, kanjiList: KanjiEntry[]) {
-  console.log(`\nSeeding Kanji for Level ${levelId}`);
+  console.log(`\nSeeding Kanji (Level ${levelId})`);
 
   const readingPool = kanjiList.map((k) => k.reading);
   const meaningPool = kanjiList.map((k) => k.meaning);
+  const kanjiPool = kanjiList.map((k) => k.kanji);
 
   const questions = kanjiList.flatMap((k) => [
+    // Kanji → Reading
     {
       levelId,
       scriptType: 'kanji' as const,
-      questionType: 'reading' as const,
+      questionType: 'kanji-to-reading' as const,
       questionText: k.kanji,
       correctAnswer: k.reading,
       options: buildOptions(k.reading, readingPool, 5)
     },
+
+    // Kanji → Meaning
     {
       levelId,
       scriptType: 'kanji' as const,
-      questionType: 'meaning' as const,
+      questionType: 'kanji-to-meaning' as const,
       questionText: k.kanji,
       correctAnswer: k.meaning,
       options: buildOptions(k.meaning, meaningPool, 4)
+    },
+
+    // Meaning → Kanji
+    {
+      levelId,
+      scriptType: 'kanji' as const,
+      questionType: 'meaning-to-kanji' as const,
+      questionText: k.meaning,
+      correctAnswer: k.kanji,
+      options: buildOptions(k.kanji, kanjiPool, 4)
     }
   ]);
 
@@ -105,10 +123,11 @@ async function seedKanji(levelId: number, kanjiList: KanjiEntry[]) {
   console.log(`✓ Seeded ${questions.length} Kanji questions`);
 }
 
-// Main
+/* -------------------- MAIN -------------------- */
 async function main() {
-  console.log('Starting database seeding...\n');
+  console.log('🚀 Starting database seeding...\n');
 
+  /* Levels */
   const levels = [
     { id: 1, name: 'jlpt-n5', requiredExp: 1000 },
     { id: 2, name: 'jlpt-n4', requiredExp: 2000 }
@@ -124,18 +143,17 @@ async function main() {
     });
   console.log('✓ Levels upserted\n');
 
+  /* Clear questions */
   console.log('Clearing existing questions...');
   await db.delete(schema.questions);
   console.log('✓ Questions cleared\n');
 
-  // Kana (N5 only)
-  await seedKana(1);
-
-  // Kanji (JSON-based)
+  /* Seed content */
+  await seedKana(1); // N5 only
   await seedKanji(1, N5_KANJI);
   await seedKanji(2, N4_KANJI);
 
-  // Summary
+  /* Summary */
   console.log('\nSummary');
   const counts = await db
     .select({
@@ -147,12 +165,14 @@ async function main() {
     .groupBy(schema.questions.scriptType, schema.questions.questionType);
 
   console.table(counts);
-  console.log('\nSeeding complete!');
+  console.log('\n✅ Seeding complete!');
 }
+
+/* -------------------- RUN -------------------- */
 
 main()
   .catch((err) => {
-    console.error('Seeding failed:', err);
+    console.error('❌ Seeding failed:', err);
     process.exit(1);
   })
   .finally(async () => {

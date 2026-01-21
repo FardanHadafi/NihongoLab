@@ -117,7 +117,9 @@ export const questions = pgTable(
       .references(() => levels.id, { onDelete: 'cascade' }),
 
     scriptType: text('script_type').notNull(),
-    questionType: text('question_type').$type<'reading' | 'meaning'>().notNull(),
+    questionType: text('question_type')
+      .$type<'reading' | 'meaning' | 'kanji-to-reading' | 'kanji-to-meaning' | 'meaning-to-kanji'>()
+      .notNull(),
     questionText: text('question_text').notNull(),
     correctAnswer: text('correct_answer').notNull(),
 

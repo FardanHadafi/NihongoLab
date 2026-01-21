@@ -1,74 +1,52 @@
 <script lang="ts">
-	import { page } from '$app/state';
+	import type { LessonResult, QuizQuestion } from '@nihongolab/db';
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
-	// ---------- Types ----------
-	type QuizQuestion = {
-		id: number;
-		character: string;
-		options: string[];
-	};
+	let questions: QuizQuestion[] = [];
+	let currentIndex = 0;
+	let selected: string | null = null;
+	let finished = false;
+	let loading = true;
 
-	type LessonResult = {
-		correct: number;
-		total: number;
-		expEarned: number;
-	};
+	let lessonResult: LessonResult | null = null;
 
-	// ---------- Route param ----------
-	const level = $derived(page.params.level);
+	$: level = $page.params.level;
+	$: current = questions[currentIndex];
 
-	// ---------- State ----------
-	const questions = $state<QuizQuestion[]>([]);
-	let currentIndex = $state(0);
-	let selected = $state<string | null>(null);
-	let feedback = $state<'correct' | 'wrong' | null>(null);
-	let loading = $state(true);
-	let finished = $state(false);
-	let lessonResult = $state<LessonResult | null>(null);
-
-	// ---------- Derived ----------
-	const current = $derived(() => questions[currentIndex] ?? null);
-
-	// ---------- Lesson ----------
+	// LESSON FLOW
 	async function startLesson() {
 		loading = true;
 		finished = false;
 		currentIndex = 0;
 		selected = null;
-		feedback = null;
 		lessonResult = null;
 
 		const res = await fetch(`/api/learn/kanji?level=${level}&limit=10`);
-		const data = await res.json();
+		questions = await res.json();
 
-		questions.splice(0, questions.length, ...data);
 		loading = false;
 	}
 
 	onMount(startLesson);
 
-	// ---------- Answer ----------
+	// ANSWER
 	async function selectOption(option: string) {
-		if (selected || !current()) return;
+		if (selected || !current) return;
 
 		selected = option;
 
-		const res = await fetch('/api/learn/submit', {
+		await fetch('/api/learn/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
-				questionId: current()!.id,
+				questionId: current.id,
 				answer: option
 			})
 		});
 
-		const result = await res.json();
-		feedback = result.correct ? 'correct' : 'wrong';
-
 		setTimeout(() => {
 			selected = null;
-			feedback = null;
 			currentIndex++;
 
 			if (currentIndex >= questions.length) {
@@ -78,7 +56,7 @@
 		}, 700);
 	}
 
-	// ---------- Complete ----------
+	// COMPLETE
 	async function completeLesson() {
 		const res = await fetch('/api/learn/complete', {
 			method: 'POST',
@@ -90,89 +68,91 @@
 
 		lessonResult = await res.json();
 	}
+
+	// Heuristic: if options contain kanji → meaning question
+	function questionSentence(q: QuizQuestion) {
+		const kanjiRegex = /[\u4e00-\u9faf]/;
+		const optionsHaveKanji = q.options.some((o) => kanjiRegex.test(o));
+
+		if (optionsHaveKanji) return 'Which kanji matches this meaning?';
+		if (kanjiRegex.test(q.character)) return 'What does this kanji mean?';
+		return 'How do you read this kanji?';
+	}
 </script>
 
-<!-- ================= UI ================= -->
-
+<!-- LOADING -->
 {#if loading}
-	<p class="loading">Loading {level} Kanji lesson…</p>
+	<p class="loading">Loading Kanji lesson...</p>
 
+	<!-- RESULT -->
 {:else if finished && lessonResult}
-	<section class="result">
-		<h2>Lesson Complete !</h2>
+	<div class="result">
+		<h2 class="result-title">Lesson Complete 🎉</h2>
 
-		<p class="score">
-			{lessonResult.correct} / {lessonResult.total} correct
+		<p>{lessonResult.correct} / {lessonResult.total} correct</p>
+		<p class="result-xp">+{lessonResult.expEarned} XP</p>
+
+		<button class="btn-primary" on:click={startLesson}>Next Lesson</button>
+		<a href="/dashboard" class="btn-secondary">Done</a>
+	</div>
+
+	<!-- QUIZ -->
+{:else if current}
+	<div class="quiz">
+		<p class="quiz-progress">
+			{level.toUpperCase()} · Question {currentIndex + 1} / {questions.length}
 		</p>
 
-		<p class="xp">+{lessonResult.expEarned} XP</p>
+		<p class="quiz-type">{questionSentence(current)}</p>
 
-		<div class="actions">
-			<button onclick={startLesson}>Next</button>
-			<a href="/dashboard">Done</a>
-		</div>
-	</section>
-
-{:else if current()}
-	<section class="quiz">
-		<p class="progress">
-			{level} · Question {currentIndex + 1} / {questions.length}
-		</p>
-
-		<div class="kanji">
-			{current()!.character}
+		<div class="quiz-character">
+			{current.character}
 		</div>
 
-		<div class="options">
-			{#each current()!.options as option}
+		<div class="options-grid">
+			{#each current.options as option}
 				<button
 					class="option"
-					class:correct={feedback === 'correct' && option === selected}
-					class:wrong={feedback === 'wrong' && option === selected}
+					class:correct={selected && option === current.correct}
+					class:wrong={selected && option === selected && option !== current.correct}
 					disabled={!!selected}
-					onclick={() => selectOption(option)}
+					on:click={() => selectOption(option)}
 				>
 					{option}
 				</button>
 			{/each}
 		</div>
-	</section>
+	</div>
 {/if}
 
-<!-- ================= STYLES ================= -->
-
 <style>
-	:global(body) {
-		background: #fafafa;
-	}
-
-	.loading {
-		margin-top: 3rem;
-		text-align: center;
-		color: #555;
-	}
-
 	.quiz {
 		max-width: 420px;
-		margin: 3rem auto;
+		margin: 2.5rem auto;
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
 	}
 
-	.progress {
+	.quiz-progress {
 		font-size: 0.85rem;
 		color: #777;
 		text-align: center;
 	}
 
-	.kanji {
-		font-size: 5rem;
-		font-weight: 700;
+	.quiz-type {
 		text-align: center;
+		font-weight: 600;
+		color: #2563eb;
 	}
 
-	.options {
+	.quiz-character {
+		text-align: center;
+		font-size: 4.5rem;
+		font-weight: bold;
+	}
+
+	.options-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: 1rem;
@@ -182,76 +162,48 @@
 		padding: 0.75rem;
 		font-size: 1.1rem;
 		border-radius: 0.5rem;
-		border: 2px solid #e5e7eb;
-		background: white;
+		border: 2px solid #ddd;
+		background: #fff;
 		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.option:hover:not(:disabled) {
-		background: #f9fafb;
-	}
-
-	.option:disabled {
-		cursor: not-allowed;
 	}
 
 	.option.correct {
 		background: #dcfce7;
 		border-color: #22c55e;
-		color: #166534;
 	}
 
 	.option.wrong {
 		background: #fee2e2;
 		border-color: #ef4444;
-		color: #7f1d1d;
 	}
 
 	.result {
-		max-width: 420px;
-		margin: 3rem auto;
 		text-align: center;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+		margin-top: 2rem;
 	}
 
-	.result h2 {
-		font-size: 2rem;
-	}
-
-	.score {
-		font-size: 1.1rem;
-	}
-
-	.xp {
-		font-size: 1.4rem;
+	.result-xp {
 		font-weight: bold;
 		color: #16a34a;
 	}
 
-	.actions {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
+	.btn-primary,
+	.btn-secondary {
+		display: block;
 		margin-top: 1rem;
-	}
-
-	button,
-	a {
 		padding: 0.75rem;
 		border-radius: 0.5rem;
+		text-align: center;
 		font-weight: 600;
-		text-decoration: none;
-		border: none;
-		background: #2563eb;
-		color: black;
-		cursor: pointer;
 	}
 
-	button:hover,
-	a:hover {
-		background: #1d4ed8;
+	.btn-primary {
+		background: #2563eb;
+		color: white;
+	}
+
+	.btn-secondary {
+		background: #6b7280;
+		color: white;
 	}
 </style>
