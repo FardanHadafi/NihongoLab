@@ -66,6 +66,16 @@ export type KanjiEntry = {
   meaning: string;
 };
 
+export type VocabEntry = {
+  word: string | null;
+  reading: string;
+  meaning: string;
+  category: string;
+  partOfSpeech: PartOfSpeech;
+};
+
+export type PartOfSpeech = 'noun' | 'verb' | 'adj-i' | 'adj-na' | 'expression';
+
 export type QuizQuestion = {
   id: number;
   character: string;

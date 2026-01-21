@@ -1,0 +1,345 @@
+[
+  {
+    "word": "私",
+    "reading": "わたし",
+    "meaning": "I, me",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "あなた",
+    "reading": "あなた",
+    "meaning": "you",
+    "category": "people",
+    "partOfSpeech": "pronoun"
+  },
+  {
+    "word": "人",
+    "reading": "ひと",
+    "meaning": "person",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "友達",
+    "reading": "ともだち",
+    "meaning": "friend",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "先生",
+    "reading": "せんせい",
+    "meaning": "teacher",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "学生",
+    "reading": "がくせい",
+    "meaning": "student",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "一",
+    "reading": "いち",
+    "meaning": "one",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "二",
+    "reading": "に",
+    "meaning": "two",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "三",
+    "reading": "さん",
+    "meaning": "three",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "四",
+    "reading": "よん",
+    "meaning": "four",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "五",
+    "reading": "ご",
+    "meaning": "five",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "六",
+    "reading": "ろく",
+    "meaning": "six",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "七",
+    "reading": "なな",
+    "meaning": "seven",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "八",
+    "reading": "はち",
+    "meaning": "eight",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "九",
+    "reading": "きゅう",
+    "meaning": "nine",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "十",
+    "reading": "じゅう",
+    "meaning": "ten",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "今日",
+    "reading": "きょう",
+    "meaning": "today",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "昨日",
+    "reading": "きのう",
+    "meaning": "yesterday",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "明日",
+    "reading": "あした",
+    "meaning": "tomorrow",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "朝",
+    "reading": "あさ",
+    "meaning": "morning",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "夜",
+    "reading": "よる",
+    "meaning": "night",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "学校",
+    "reading": "がっこう",
+    "meaning": "school",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "家",
+    "reading": "いえ",
+    "meaning": "house, home",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "駅",
+    "reading": "えき",
+    "meaning": "station",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "店",
+    "reading": "みせ",
+    "meaning": "shop",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "水",
+    "reading": "みず",
+    "meaning": "water",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "ご飯",
+    "reading": "ごはん",
+    "meaning": "rice, meal",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "肉",
+    "reading": "にく",
+    "meaning": "meat",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "魚",
+    "reading": "さかな",
+    "meaning": "fish",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "行く",
+    "reading": "いく",
+    "meaning": "to go",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "来る",
+    "reading": "くる",
+    "meaning": "to come",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "食べる",
+    "reading": "たべる",
+    "meaning": "to eat",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "飲む",
+    "reading": "のむ",
+    "meaning": "to drink",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "見る",
+    "reading": "みる",
+    "meaning": "to see, to watch",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "聞く",
+    "reading": "きく",
+    "meaning": "to listen, to ask",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "話す",
+    "reading": "はなす",
+    "meaning": "to speak",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "書く",
+    "reading": "かく",
+    "meaning": "to write",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "読む",
+    "reading": "よむ",
+    "meaning": "to read",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+
+  {
+    "word": "大きい",
+    "reading": "おおきい",
+    "meaning": "big",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "小さい",
+    "reading": "ちいさい",
+    "meaning": "small",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "いい",
+    "reading": "いい",
+    "meaning": "good",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "悪い",
+    "reading": "わるい",
+    "meaning": "bad",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "新しい",
+    "reading": "あたらしい",
+    "meaning": "new",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "古い",
+    "reading": "ふるい",
+    "meaning": "old",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+
+  {
+    "word": "ありがとう",
+    "reading": "ありがとう",
+    "meaning": "thank you",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "すみません",
+    "reading": "すみません",
+    "meaning": "excuse me, sorry",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "はい",
+    "reading": "はい",
+    "meaning": "yes",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "いいえ",
+    "reading": "いいえ",
+    "meaning": "no",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  }
+]

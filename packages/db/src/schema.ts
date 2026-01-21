@@ -194,14 +194,20 @@ export const vocabulary = pgTable(
   'vocabulary',
   {
     id: serial('id').primaryKey(),
-
     word: text('word').notNull(), // 日本語
     reading: text('reading'), // にほんご
     meaning: text('meaning').notNull(), // "Japanese language"
-
+    partOfSpeech: text('part_of_speech').notNull(),
+    category: text('category'), // food, time, verb, etc.
     levelId: integer('level_id').references(() => levels.id)
   },
-  (table) => [index('vocabulary_level_id_idx').on(table.levelId)]
+  (table) => [
+    index('vocabulary_level_id_idx').on(table.levelId),
+    index('vocabulary_category_idx').on(table.category),
+    index('vocab_pos_idx').on(table.partOfSpeech),
+    index('vocab_word_idx').on(table.word),
+    index('vocab_reading_idx').on(table.reading)
+  ]
 );
 
 // TYPES

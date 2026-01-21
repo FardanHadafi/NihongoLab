@@ -1319,6 +1319,7 @@
 		background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
 		color: #cbd5e1;
 		padding: 85px 20px 40px;
+		bottom: 0;
 	}
 
 	.footer-content {

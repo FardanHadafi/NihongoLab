@@ -92,7 +92,7 @@
 		<p>{lessonResult.correct} / {lessonResult.total} correct</p>
 		<p class="result-xp">+{lessonResult.expEarned} XP</p>
 
-		<button class="btn-primary" on:click={startLesson}>Next Lesson</button>
+		<button class="btn-primary" onclick={startLesson}>Next Lesson</button>
 		<a href="/dashboard" class="btn-secondary">Done</a>
 	</div>
 
@@ -116,7 +116,7 @@
 					class:correct={selected && option === current.correct}
 					class:wrong={selected && option === selected && option !== current.correct}
 					disabled={!!selected}
-					on:click={() => selectOption(option)}
+					onclick={() => selectOption(option)}
 				>
 					{option}
 				</button>

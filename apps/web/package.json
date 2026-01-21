@@ -12,6 +12,7 @@
 		"@repo/ui": "workspace:*",
 		"better-auth": "^1.4.11",
 		"dotenv": "^17.2.3",
+		"drizzle-orm": "^0.45.1",
 		"gsap": "^3.14.2",
 		"zod": "^4.3.5"
 	},
@@ -21,6 +22,7 @@
 		"@sveltejs/adapter-auto": "^4.0.0",
 		"@sveltejs/kit": "^2.49.0",
 		"@sveltejs/vite-plugin-svelte": "^5.1.0",
+		"@types/node": "^25.0.6",
 		"eslint": "^9.39.1",
 		"prettier": "^3.7.4",
 		"prettier-plugin-svelte": "^3.4.0",

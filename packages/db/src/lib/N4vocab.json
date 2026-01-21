@@ -1,0 +1,283 @@
+[
+  {
+    "word": "会社",
+    "reading": "かいしゃ",
+    "meaning": "company",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "社員",
+    "reading": "しゃいん",
+    "meaning": "employee",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "医者",
+    "reading": "いしゃ",
+    "meaning": "doctor",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "看護師",
+    "reading": "かんごし",
+    "meaning": "nurse",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "百",
+    "reading": "ひゃく",
+    "meaning": "hundred",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "千",
+    "reading": "せん",
+    "meaning": "thousand",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "万",
+    "reading": "まん",
+    "meaning": "ten thousand",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "週",
+    "reading": "しゅう",
+    "meaning": "week",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "月",
+    "reading": "つき",
+    "meaning": "month",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "年",
+    "reading": "とし",
+    "meaning": "year",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  { "word": "今", "reading": "いま", "meaning": "now", "category": "time", "partOfSpeech": "noun" },
+  {
+    "word": "最近",
+    "reading": "さいきん",
+    "meaning": "recently",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "病院",
+    "reading": "びょういん",
+    "meaning": "hospital",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "銀行",
+    "reading": "ぎんこう",
+    "meaning": "bank",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "郵便局",
+    "reading": "ゆうびんきょく",
+    "meaning": "post office",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "公園",
+    "reading": "こうえん",
+    "meaning": "park",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "空港",
+    "reading": "くうこう",
+    "meaning": "airport",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "料理",
+    "reading": "りょうり",
+    "meaning": "cooking",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "野菜",
+    "reading": "やさい",
+    "meaning": "vegetable",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "果物",
+    "reading": "くだもの",
+    "meaning": "fruit",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "働く",
+    "reading": "はたらく",
+    "meaning": "to work",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "休む",
+    "reading": "やすむ",
+    "meaning": "to rest",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "始める",
+    "reading": "はじめる",
+    "meaning": "to start",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "終わる",
+    "reading": "おわる",
+    "meaning": "to finish",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "続ける",
+    "reading": "つづける",
+    "meaning": "to continue",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "考える",
+    "reading": "かんがえる",
+    "meaning": "to think",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "決める",
+    "reading": "きめる",
+    "meaning": "to decide",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "送る",
+    "reading": "おくる",
+    "meaning": "to send",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "使う",
+    "reading": "つかう",
+    "meaning": "to use",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "作る",
+    "reading": "つくる",
+    "meaning": "to make",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+
+  {
+    "word": "簡単",
+    "reading": "かんたん",
+    "meaning": "easy",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+  {
+    "word": "難しい",
+    "reading": "むずかしい",
+    "meaning": "difficult",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "便利",
+    "reading": "べんり",
+    "meaning": "convenient",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+  {
+    "word": "有名",
+    "reading": "ゆうめい",
+    "meaning": "famous",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+  {
+    "word": "必要",
+    "reading": "ひつよう",
+    "meaning": "necessary",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+  {
+    "word": "大切",
+    "reading": "たいせつ",
+    "meaning": "important",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+
+  {
+    "word": "大丈夫",
+    "reading": "だいじょうぶ",
+    "meaning": "it's okay",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "残念",
+    "reading": "ざんねん",
+    "meaning": "unfortunate",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "一緒に",
+    "reading": "いっしょに",
+    "meaning": "together",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "もちろん",
+    "reading": "もちろん",
+    "meaning": "of course",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  }
+]

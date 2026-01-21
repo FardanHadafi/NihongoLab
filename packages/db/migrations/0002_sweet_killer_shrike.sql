@@ -1,0 +1,1 @@
+ALTER TABLE "vocabulary" ALTER COLUMN "part_of_speech" SET NOT NULL;

@@ -5,9 +5,14 @@ import { sql } from 'drizzle-orm';
 
 import { HIRAGANA } from './lib/hiragana';
 import { KATAKANA } from './lib/katakana';
+
 import N5_KANJI from './lib/N5.json';
 import N4_KANJI from './lib/N4.json';
-import { KanjiEntry } from './db.types';
+
+import N5_VOCAB from './lib/N5vocab.json';
+import N4_VOCAB from './lib/N4vocab.json';
+
+import { KanjiEntry, PartOfSpeech } from './db.types';
 
 /* -------------------- SETUP -------------------- */
 
@@ -44,8 +49,6 @@ function buildOptions(correct: string, pool: string[], size: number) {
 /* -------------------- KANA SEEDING -------------------- */
 
 async function seedKana(levelId: number) {
-  console.log(`\nSeeding Kana (Level ${levelId})`);
-
   const hiraPool = HIRAGANA.map((h) => h[1]);
   const kataPool = KATAKANA.map((k) => k[1]);
 
@@ -69,22 +72,16 @@ async function seedKana(levelId: number) {
 
   await db.insert(schema.questions).values(hiraganaQuestions);
   await db.insert(schema.questions).values(katakanaQuestions);
-
-  console.log(`✓ Seeded ${hiraganaQuestions.length} Hiragana`);
-  console.log(`✓ Seeded ${katakanaQuestions.length} Katakana`);
 }
 
 /* -------------------- KANJI SEEDING -------------------- */
 
 async function seedKanji(levelId: number, kanjiList: KanjiEntry[]) {
-  console.log(`\nSeeding Kanji (Level ${levelId})`);
-
   const readingPool = kanjiList.map((k) => k.reading);
   const meaningPool = kanjiList.map((k) => k.meaning);
   const kanjiPool = kanjiList.map((k) => k.kanji);
 
   const questions = kanjiList.flatMap((k) => [
-    // Kanji → Reading
     {
       levelId,
       scriptType: 'kanji' as const,
@@ -93,8 +90,6 @@ async function seedKanji(levelId: number, kanjiList: KanjiEntry[]) {
       correctAnswer: k.reading,
       options: buildOptions(k.reading, readingPool, 5)
     },
-
-    // Kanji → Meaning
     {
       levelId,
       scriptType: 'kanji' as const,
@@ -103,8 +98,6 @@ async function seedKanji(levelId: number, kanjiList: KanjiEntry[]) {
       correctAnswer: k.meaning,
       options: buildOptions(k.meaning, meaningPool, 4)
     },
-
-    // Meaning → Kanji
     {
       levelId,
       scriptType: 'kanji' as const,
@@ -119,21 +112,48 @@ async function seedKanji(levelId: number, kanjiList: KanjiEntry[]) {
   for (let i = 0; i < questions.length; i += batchSize) {
     await db.insert(schema.questions).values(questions.slice(i, i + batchSize));
   }
+}
 
-  console.log(`✓ Seeded ${questions.length} Kanji questions`);
+/* -------------------- VOCABULARY SEEDING -------------------- */
+
+type VocabEntry = {
+  word: string;
+  reading: string;
+  meaning: string;
+  category: string;
+  partOfSpeech: PartOfSpeech;
+};
+
+async function seedVocabulary(levelId: number, vocab: VocabEntry[]) {
+  console.log(`Seeding vocabulary (Level ${levelId})`);
+
+  const rows = vocab.map((v) => ({
+    levelId,
+    word: v.word,
+    reading: v.reading,
+    meaning: v.meaning,
+    category: v.category,
+    partOfSpeech: v.partOfSpeech
+  }));
+
+  const batchSize = 200;
+  for (let i = 0; i < rows.length; i += batchSize) {
+    await db.insert(schema.vocabulary).values(rows.slice(i, i + batchSize));
+  }
+
+  console.log(`✓ Seeded ${rows.length} vocabulary items`);
 }
 
 /* -------------------- MAIN -------------------- */
+
 async function main() {
   console.log('🚀 Starting database seeding...\n');
 
-  /* Levels */
   const levels = [
     { id: 1, name: 'jlpt-n5', requiredExp: 1000 },
     { id: 2, name: 'jlpt-n4', requiredExp: 2000 }
   ];
 
-  console.log('Upserting levels...');
   await db
     .insert(schema.levels)
     .values(levels)
@@ -141,30 +161,19 @@ async function main() {
       target: schema.levels.id,
       set: { name: sql.raw('excluded.name') }
     });
-  console.log('✓ Levels upserted\n');
 
-  /* Clear questions */
-  console.log('Clearing existing questions...');
+  /* Clear tables */
   await db.delete(schema.questions);
-  console.log('✓ Questions cleared\n');
+  await db.delete(schema.vocabulary);
 
   /* Seed content */
-  await seedKana(1); // N5 only
+  await seedKana(1);
   await seedKanji(1, N5_KANJI);
   await seedKanji(2, N4_KANJI);
 
-  /* Summary */
-  console.log('\nSummary');
-  const counts = await db
-    .select({
-      scriptType: schema.questions.scriptType,
-      questionType: schema.questions.questionType,
-      count: sql<number>`count(*)`
-    })
-    .from(schema.questions)
-    .groupBy(schema.questions.scriptType, schema.questions.questionType);
+  await seedVocabulary(1, N5_VOCAB as VocabEntry[]);
+  await seedVocabulary(2, N4_VOCAB as VocabEntry[]);
 
-  console.table(counts);
   console.log('\n✅ Seeding complete!');
 }
 
