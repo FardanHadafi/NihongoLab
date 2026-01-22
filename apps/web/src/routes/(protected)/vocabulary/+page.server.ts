@@ -5,12 +5,13 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 	const search = url.searchParams.get('q') ?? '';
 
 	const res = await fetch(
-		`/api/vocabulary?levelId=${levelId}&limit=50&q=${encodeURIComponent(search)}`
+		`/api/vocabulary?levelId=${levelId}&limit=25&q=${encodeURIComponent(search)}`
 	);
 
 	if (!res.ok) {
 		throw new Error('Failed to load vocabulary');
 	}
 
-	return res.json();
+	const data = await res.json();
+	return data;
 };

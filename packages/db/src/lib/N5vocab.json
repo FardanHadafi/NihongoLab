@@ -41,6 +41,55 @@
     "category": "people",
     "partOfSpeech": "noun"
   },
+  {
+    "word": "子供",
+    "reading": "こども",
+    "meaning": "child",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "男",
+    "reading": "おとこ",
+    "meaning": "man",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "女",
+    "reading": "おんな",
+    "meaning": "woman",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "父",
+    "reading": "ちち",
+    "meaning": "father",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "母",
+    "reading": "はは",
+    "meaning": "mother",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "兄",
+    "reading": "あに",
+    "meaning": "older brother",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "姉",
+    "reading": "あね",
+    "meaning": "older sister",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
 
   {
     "word": "一",
@@ -112,6 +161,27 @@
     "category": "numbers",
     "partOfSpeech": "noun"
   },
+  {
+    "word": "二十",
+    "reading": "にじゅう",
+    "meaning": "twenty",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "三十",
+    "reading": "さんじゅう",
+    "meaning": "thirty",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "百",
+    "reading": "ひゃく",
+    "meaning": "hundred",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
 
   {
     "word": "今日",
@@ -148,6 +218,76 @@
     "category": "time",
     "partOfSpeech": "noun"
   },
+  {
+    "word": "昼",
+    "reading": "ひる",
+    "meaning": "afternoon, daytime",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "月曜日",
+    "reading": "げつようび",
+    "meaning": "Monday",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "火曜日",
+    "reading": "かようび",
+    "meaning": "Tuesday",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "水曜日",
+    "reading": "すいようび",
+    "meaning": "Wednesday",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "木曜日",
+    "reading": "もくようび",
+    "meaning": "Thursday",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "金曜日",
+    "reading": "きんようび",
+    "meaning": "Friday",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "土曜日",
+    "reading": "どようび",
+    "meaning": "Saturday",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "日曜日",
+    "reading": "にちようび",
+    "meaning": "Sunday",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "時",
+    "reading": "じ",
+    "meaning": "o'clock",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "分",
+    "reading": "ふん",
+    "meaning": "minute",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
 
   {
     "word": "学校",
@@ -177,6 +317,27 @@
     "category": "places",
     "partOfSpeech": "noun"
   },
+  {
+    "word": "レストラン",
+    "reading": "レストラン",
+    "meaning": "restaurant",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "図書館",
+    "reading": "としょかん",
+    "meaning": "library",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "部屋",
+    "reading": "へや",
+    "meaning": "room",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
 
   {
     "word": "水",
@@ -203,6 +364,41 @@
     "word": "魚",
     "reading": "さかな",
     "meaning": "fish",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "パン",
+    "reading": "パン",
+    "meaning": "bread",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "牛乳",
+    "reading": "ぎゅうにゅう",
+    "meaning": "milk",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "卵",
+    "reading": "たまご",
+    "meaning": "egg",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "お茶",
+    "reading": "おちゃ",
+    "meaning": "tea",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "コーヒー",
+    "reading": "コーヒー",
+    "meaning": "coffee",
     "category": "food",
     "partOfSpeech": "noun"
   },
@@ -270,6 +466,55 @@
     "category": "verbs",
     "partOfSpeech": "verb"
   },
+  {
+    "word": "買う",
+    "reading": "かう",
+    "meaning": "to buy",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "売る",
+    "reading": "うる",
+    "meaning": "to sell",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "待つ",
+    "reading": "まつ",
+    "meaning": "to wait",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "会う",
+    "reading": "あう",
+    "meaning": "to meet",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "寝る",
+    "reading": "ねる",
+    "meaning": "to sleep",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "起きる",
+    "reading": "おきる",
+    "meaning": "to wake up",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "勉強する",
+    "reading": "べんきょうする",
+    "meaning": "to study",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
 
   {
     "word": "大きい",
@@ -313,6 +558,112 @@
     "category": "adjectives",
     "partOfSpeech": "adj-i"
   },
+  {
+    "word": "高い",
+    "reading": "たかい",
+    "meaning": "expensive, tall",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "安い",
+    "reading": "やすい",
+    "meaning": "cheap",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "暑い",
+    "reading": "あつい",
+    "meaning": "hot (weather)",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "寒い",
+    "reading": "さむい",
+    "meaning": "cold (weather)",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "面白い",
+    "reading": "おもしろい",
+    "meaning": "interesting",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "楽しい",
+    "reading": "たのしい",
+    "meaning": "fun, enjoyable",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "美味しい",
+    "reading": "おいしい",
+    "meaning": "delicious",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "元気",
+    "reading": "げんき",
+    "meaning": "healthy, energetic",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+  {
+    "word": "静か",
+    "reading": "しずか",
+    "meaning": "quiet",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+
+  {
+    "word": "本",
+    "reading": "ほん",
+    "meaning": "book",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "ペン",
+    "reading": "ペン",
+    "meaning": "pen",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "机",
+    "reading": "つくえ",
+    "meaning": "desk",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "椅子",
+    "reading": "いす",
+    "meaning": "chair",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "鞄",
+    "reading": "かばん",
+    "meaning": "bag",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "時計",
+    "reading": "とけい",
+    "meaning": "clock, watch",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
 
   {
     "word": "ありがとう",
@@ -339,6 +690,34 @@
     "word": "いいえ",
     "reading": "いいえ",
     "meaning": "no",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "おはよう",
+    "reading": "おはよう",
+    "meaning": "good morning",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "こんにちは",
+    "reading": "こんにちは",
+    "meaning": "hello, good afternoon",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "こんばんは",
+    "reading": "こんばんは",
+    "meaning": "good evening",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "さようなら",
+    "reading": "さようなら",
+    "meaning": "goodbye",
     "category": "expressions",
     "partOfSpeech": "expression"
   }

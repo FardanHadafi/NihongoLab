@@ -27,6 +27,34 @@
     "category": "people",
     "partOfSpeech": "noun"
   },
+  {
+    "word": "大人",
+    "reading": "おとな",
+    "meaning": "adult",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "赤ちゃん",
+    "reading": "あかちゃん",
+    "meaning": "baby",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "警察",
+    "reading": "けいさつ",
+    "meaning": "police",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "歌手",
+    "reading": "かしゅ",
+    "meaning": "singer",
+    "category": "people",
+    "partOfSpeech": "noun"
+  },
 
   {
     "word": "百",
@@ -46,6 +74,20 @@
     "word": "万",
     "reading": "まん",
     "meaning": "ten thousand",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "半分",
+    "reading": "はんぶん",
+    "meaning": "half",
+    "category": "numbers",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "全部",
+    "reading": "ぜんぶ",
+    "meaning": "all, everything",
     "category": "numbers",
     "partOfSpeech": "noun"
   },
@@ -71,11 +113,80 @@
     "category": "time",
     "partOfSpeech": "noun"
   },
-  { "word": "今", "reading": "いま", "meaning": "now", "category": "time", "partOfSpeech": "noun" },
+  {
+    "word": "今",
+    "reading": "いま",
+    "meaning": "now",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
   {
     "word": "最近",
     "reading": "さいきん",
     "meaning": "recently",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "将来",
+    "reading": "しょうらい",
+    "meaning": "future",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "過去",
+    "reading": "かこ",
+    "meaning": "past",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "午前",
+    "reading": "ごぜん",
+    "meaning": "morning, AM",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "午後",
+    "reading": "ごご",
+    "meaning": "afternoon, PM",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "夕方",
+    "reading": "ゆうがた",
+    "meaning": "evening",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "一月",
+    "reading": "いちがつ",
+    "meaning": "January",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "二月",
+    "reading": "にがつ",
+    "meaning": "February",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "三月",
+    "reading": "さんがつ",
+    "meaning": "March",
+    "category": "time",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "四月",
+    "reading": "しがつ",
+    "meaning": "April",
     "category": "time",
     "partOfSpeech": "noun"
   },
@@ -115,11 +226,60 @@
     "category": "places",
     "partOfSpeech": "noun"
   },
+  {
+    "word": "海",
+    "reading": "うみ",
+    "meaning": "sea, ocean",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "山",
+    "reading": "やま",
+    "meaning": "mountain",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "川",
+    "reading": "かわ",
+    "meaning": "river",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "町",
+    "reading": "まち",
+    "meaning": "town",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "国",
+    "reading": "くに",
+    "meaning": "country",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "世界",
+    "reading": "せかい",
+    "meaning": "world",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "交番",
+    "reading": "こうばん",
+    "meaning": "police box",
+    "category": "places",
+    "partOfSpeech": "noun"
+  },
 
   {
     "word": "料理",
     "reading": "りょうり",
-    "meaning": "cooking",
+    "meaning": "cooking, cuisine",
     "category": "food",
     "partOfSpeech": "noun"
   },
@@ -134,6 +294,55 @@
     "word": "果物",
     "reading": "くだもの",
     "meaning": "fruit",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "砂糖",
+    "reading": "さとう",
+    "meaning": "sugar",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "塩",
+    "reading": "しお",
+    "meaning": "salt",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "味",
+    "reading": "あじ",
+    "meaning": "taste, flavor",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "お弁当",
+    "reading": "おべんとう",
+    "meaning": "boxed lunch",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "朝ご飯",
+    "reading": "あさごはん",
+    "meaning": "breakfast",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "昼ご飯",
+    "reading": "ひるごはん",
+    "meaning": "lunch",
+    "category": "food",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "晩ご飯",
+    "reading": "ばんごはん",
+    "meaning": "dinner",
     "category": "food",
     "partOfSpeech": "noun"
   },
@@ -208,6 +417,83 @@
     "category": "verbs",
     "partOfSpeech": "verb"
   },
+  {
+    "word": "教える",
+    "reading": "おしえる",
+    "meaning": "to teach",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "習う",
+    "reading": "ならう",
+    "meaning": "to learn",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "忘れる",
+    "reading": "わすれる",
+    "meaning": "to forget",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "覚える",
+    "reading": "おぼえる",
+    "meaning": "to memorize",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "探す",
+    "reading": "さがす",
+    "meaning": "to search",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "見つける",
+    "reading": "みつける",
+    "meaning": "to find",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "貸す",
+    "reading": "かす",
+    "meaning": "to lend",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "借りる",
+    "reading": "かりる",
+    "meaning": "to borrow",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "直す",
+    "reading": "なおす",
+    "meaning": "to fix",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "壊れる",
+    "reading": "こわれる",
+    "meaning": "to break",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
+  {
+    "word": "運ぶ",
+    "reading": "はこぶ",
+    "meaning": "to carry",
+    "category": "verbs",
+    "partOfSpeech": "verb"
+  },
 
   {
     "word": "簡単",
@@ -251,11 +537,125 @@
     "category": "adjectives",
     "partOfSpeech": "adj-na"
   },
+  {
+    "word": "丁寧",
+    "reading": "ていねい",
+    "meaning": "polite, careful",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+  {
+    "word": "上手",
+    "reading": "じょうず",
+    "meaning": "skillful",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+  {
+    "word": "下手",
+    "reading": "へた",
+    "meaning": "unskillful",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+  {
+    "word": "綺麗",
+    "reading": "きれい",
+    "meaning": "pretty, clean",
+    "category": "adjectives",
+    "partOfSpeech": "adj-na"
+  },
+  {
+    "word": "汚い",
+    "reading": "きたない",
+    "meaning": "dirty",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "危ない",
+    "reading": "あぶない",
+    "meaning": "dangerous",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "正しい",
+    "reading": "ただしい",
+    "meaning": "correct",
+    "category": "adjectives",
+    "partOfSpeech": "adj-i"
+  },
+  {
+    "word": "間違い",
+    "reading": "まちがい",
+    "meaning": "mistake",
+    "category": "adjectives",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "犬",
+    "reading": "いぬ",
+    "meaning": "dog",
+    "category": "animals",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "猫",
+    "reading": "ねこ",
+    "meaning": "cat",
+    "category": "animals",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "鳥",
+    "reading": "とり",
+    "meaning": "bird",
+    "category": "animals",
+    "partOfSpeech": "noun"
+  },
+
+  {
+    "word": "服",
+    "reading": "ふく",
+    "meaning": "clothes",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "靴",
+    "reading": "くつ",
+    "meaning": "shoes",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "帽子",
+    "reading": "ぼうし",
+    "meaning": "hat",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "傘",
+    "reading": "かさ",
+    "meaning": "umbrella",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
+  {
+    "word": "財布",
+    "reading": "さいふ",
+    "meaning": "wallet",
+    "category": "objects",
+    "partOfSpeech": "noun"
+  },
 
   {
     "word": "大丈夫",
     "reading": "だいじょうぶ",
-    "meaning": "it's okay",
+    "meaning": "it's okay, all right",
     "category": "expressions",
     "partOfSpeech": "expression"
   },
@@ -277,6 +677,27 @@
     "word": "もちろん",
     "reading": "もちろん",
     "meaning": "of course",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "たぶん",
+    "reading": "たぶん",
+    "meaning": "probably",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "どうぞ",
+    "reading": "どうぞ",
+    "meaning": "please, go ahead",
+    "category": "expressions",
+    "partOfSpeech": "expression"
+  },
+  {
+    "word": "本当",
+    "reading": "ほんとう",
+    "meaning": "really, truth",
     "category": "expressions",
     "partOfSpeech": "expression"
   }

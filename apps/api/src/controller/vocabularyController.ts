@@ -4,7 +4,7 @@ import { getVocabularyPaginated } from '../service/vocabularyService';
 
 const querySchema = z.object({
   levelId: z.coerce.number().int().positive(),
-  limit: z.coerce.number().int().min(10).max(100).default(50),
+  limit: z.coerce.number().int().min(10).max(500).default(25),
   cursor: z.coerce.number().int().optional(),
   search: z.string().min(1).optional()
 });
