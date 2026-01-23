@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
 
 	interface VocabularyItem {
 		id: number;
@@ -25,14 +24,21 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let searchQuery = $state(page.url.searchParams.get('q') ?? '');
-	let selectedLevel = $state(Number(page.url.searchParams.get('level') ?? 1));
-	let searchTimeout: ReturnType<typeof setTimeout>;
+	let searchQuery = $state(data.search ?? '');
+	let selectedLevel = $state(data.levelId ?? 1);
 
 	// State for infinite scroll
 	let allCategories = $state<CategoryGroup[]>(data.categories || []);
 	let nextCursor = $state<number | null>(data.nextCursor ?? null);
 	let isLoading = $state(false);
+
+	// Update state when data changes (e.g. after goto)
+	$effect(() => {
+		allCategories = data.categories || [];
+		nextCursor = data.nextCursor ?? null;
+		selectedLevel = data.levelId;
+		searchQuery = data.search ?? '';
+	});
 
 	// Merge categories helper
 	function mergeCategories(existing: CategoryGroup[], newData: CategoryGroup[]): CategoryGroup[] {
@@ -74,7 +80,7 @@
 			});
 
 			if (searchQuery) {
-				params.set('q', searchQuery);
+				params.set('search', searchQuery);
 			}
 
 			const res = await fetch(`/api/vocabulary?${params.toString()}`);
@@ -106,11 +112,12 @@
 
 	function handleSearch(value: string) {
 		searchQuery = value;
+	}
 
-		clearTimeout(searchTimeout);
-		searchTimeout = setTimeout(() => {
+	function handleKeyDown(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
 			updateURL();
-		}, 300);
+		}
 	}
 
 	function handleLevelChange(level: number) {
@@ -149,6 +156,7 @@
 				placeholder="Search vocabulary..."
 				value={searchQuery}
 				oninput={(e) => handleSearch(e.currentTarget.value)}
+				onkeydown={handleKeyDown}
 				class="search-input"
 			/>
 			{#if searchQuery}
@@ -163,8 +171,8 @@
 				value={selectedLevel}
 				onchange={(e) => handleLevelChange(Number(e.currentTarget.value))}
 			>
-				{#each Array(5) as _, i}
-					<option value={i + 1}>N{5 - i}</option>
+				{#each [5, 4, 3, 2, 1] as level, i}
+					<option value={i + 1}>N{level}</option>
 				{/each}
 			</select>
 		</div>
@@ -464,7 +472,7 @@
 	}
 
 	.load-more-btn {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background: linear-gradient(135deg, #dc2626 0%, #f97316 50%, #ec4899 100%);
 		color: white;
 		border: none;
 		padding: 1rem 2.5rem;
@@ -489,20 +497,6 @@
 		cursor: not-allowed;
 	}
 
-	.spinner {
-		width: 16px;
-		height: 16px;
-		border: 2px solid rgba(255, 255, 255, 0.3);
-		border-top-color: white;
-		border-radius: 50%;
-		animation: spin 0.8s linear infinite;
-	}
-
-	@keyframes spin {
-		to {
-			transform: rotate(360deg);
-		}
-	}
 
 	@media (max-width: 768px) {
 		.container {
