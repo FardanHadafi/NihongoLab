@@ -1,20 +1,23 @@
 <script lang="ts">
-  export let data;
+  import { goto } from '$app/navigation';
 
-  let currentIndex = 0;
-  let userAnswer = '';
-  let isSubmitting = false;
+  let { data } = $props();
+
+  let currentIndex = $state(0);
+  let userAnswer = $state('');
+  let isSubmitting = $state(false);
+  let finished = $state(false);
   let feedback: null | {
     isCorrect: boolean;
     correctAnswer: string;
-  } = null;
+  } = $state(null);
 
-  const questions = data.questions;
+  const questions = $derived(data.questions);
 
   const currentQuestion = () => questions[currentIndex];
 
   async function submitAnswer() {
-    if (!userAnswer.trim()) return;
+    if (!userAnswer.trim() || finished) return;
 
     isSubmitting = true;
 
@@ -41,12 +44,27 @@
   function nextQuestion() {
     feedback = null;
     userAnswer = '';
-    currentIndex += 1;
+
+    if (currentIndex + 1 >= questions.length) {
+      finished = true;
+    } else {
+      currentIndex += 1;
+    }
   }
 </script>
 
 {#if questions.length === 0}
   <p class="empty">Nothing to review today!</p>
+{:else if finished}
+  <div class="review finished">
+    <div class="card">
+      <h2 class="question">Review Complete!</h2>
+      <p class="type">You've finished all your review items.</p>
+      <button class="next" onclick={() => goto("/dashboard")}>
+        Back to Dashboard
+      </button>
+    </div>
+  </div>
 {:else}
   <section class="review">
     <div class="progress">
@@ -68,7 +86,7 @@
             {#each currentQuestion().options as option}
               <button
                 class="option"
-                on:click={() => (userAnswer = option)}
+                onclick={() => (userAnswer = option)}
                 disabled={isSubmitting}
               >
                 {option}
@@ -81,10 +99,11 @@
             placeholder="Type your answer"
             bind:value={userAnswer}
             disabled={isSubmitting}
+            onkeydown={(e) => e.key === 'Enter' && submitAnswer()}
           />
         {/if}
 
-        <button class="submit" on:click={submitAnswer} disabled={isSubmitting}>
+        <button class="submit" onclick={submitAnswer} disabled={isSubmitting}>
           Check
         </button>
       {:else}
@@ -97,8 +116,8 @@
           {/if}
         </div>
 
-        <button class="next" on:click={nextQuestion}>
-          Next
+        <button class="next" onclick={nextQuestion}>
+          {currentIndex + 1 >= questions.length ? 'Finish' : 'Next'}
         </button>
       {/if}
     </div>

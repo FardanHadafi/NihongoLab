@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	let activeLevel = 'beginner';
+	let activeLevel = $state('beginner');
 
-	const levels = [
+	const levels = $state([
 		{ id: 'beginner', name: 'Beginner' }
 		// { id: 'intermediate', name: 'Intermediate'},
 		// { id: 'advanced', name: 'Advanced'}
-	];
+	]);
 
-	const curriculum = {
+	const curriculum = $state({
 		beginner: {
 			title: 'Beginner Level',
 			subtitle: 'Build your foundation in Japanese',
@@ -155,9 +155,9 @@
 		//         }
 		//     ]
 		// }
-	};
+	});
 
-	$: currentCurriculum = curriculum[activeLevel];
+	let currentCurriculum = $derived(curriculum[activeLevel]);
 </script>
 
 <!-- Level Selector -->

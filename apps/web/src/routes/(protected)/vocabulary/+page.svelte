@@ -24,12 +24,12 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let searchQuery = $state(data.search ?? '');
-	let selectedLevel = $state(data.levelId ?? 1);
+	let searchQuery = $state('');
+	let selectedLevel = $state(1);
 
 	// State for infinite scroll
-	let allCategories = $state<CategoryGroup[]>(data.categories || []);
-	let nextCursor = $state<number | null>(data.nextCursor ?? null);
+	let allCategories = $state<CategoryGroup[]>([]);
+	let nextCursor = $state<number | null>(null);
 	let isLoading = $state(false);
 
 	// Update state when data changes (e.g. after goto)

@@ -1,11 +1,11 @@
 <script lang="ts">
-	export let data: {
-		reviewCount: number;
-	};
+	import { goto } from '$app/navigation';
+
+	let { data }: { data: { reviewCount: number } } = $props();
 </script>
 
 <section class="review-page">
-	<h1>📝 Review Your Japanese</h1>
+	<h1>Review Your Japanese</h1>
 
 	{#if data.reviewCount > 0}
 		<div class="review-card">
@@ -15,14 +15,14 @@
 
 			<p class="hint">These are questions you answered incorrectly or needed multiple attempts.</p>
 
-			<a href="/review/start" class="review-btn"> Start Review </a>
+			<button onclick={() => goto("/review/start")} class="review-btn"> Start Review </button>
 		</div>
 	{:else}
 		<div class="empty-state">
 			<p>Great job!</p>
 			<p>You have no questions to review right now.</p>
 
-			<a href="/practice" class="practice-btn"> Practice More Japanese </a>
+			<button onclick={() => goto("/practice")} class="practice-btn"> Practice More Japanese </button>
 		</div>
 	{/if}
 </section>
@@ -60,7 +60,6 @@
 
 	.review-btn,
 	.practice-btn {
-		display: inline-block;
 		padding: 0.75rem 1.5rem;
 		border-radius: 8px;
 		font-weight: 600;
