@@ -332,7 +332,7 @@
 	}
 
 	.stat-badge {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background: linear-gradient(135deg, #dc2626 0%, #f97316 50%, #ec4899 100%);
 		color: white;
 		padding: 0.5rem 1rem;
 		border-radius: 20px;
