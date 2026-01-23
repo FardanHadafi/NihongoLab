@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { LessonResult, QuizQuestion } from '@nihongolab/db';
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 
 	let questions: QuizQuestion[] = [];
 	let currentIndex = 0;
@@ -11,7 +12,7 @@
 
 	let lessonResult: LessonResult | null = null;
 
-	$: level = $page.params.level;
+	$: level = page.params.level;
 	$: current = questions[currentIndex];
 
 	// LESSON FLOW
@@ -85,16 +86,28 @@
 	<p class="loading">Loading Kanji lesson...</p>
 
 	<!-- RESULT -->
-{:else if finished && lessonResult}
-	<div class="result">
-		<h2 class="result-title">Lesson Complete 🎉</h2>
+	{:else if finished && lessonResult}
+		<div class="result-card">
+			<div class="result-header">
+				<h2 class="result-title">Lesson Complete!</h2>
+			</div>
 
-		<p>{lessonResult.correct} / {lessonResult.total} correct</p>
-		<p class="result-xp">+{lessonResult.expEarned} XP</p>
+			<div class="stats-grid">
+				<div class="stat-item">
+					<span class="stat-label">Accuracy</span>
+					<span class="stat-value">{lessonResult.correct} / {lessonResult.total}</span>
+				</div>
+				<div class="stat-item">
+					<span class="stat-label">Experience</span>
+					<span class="stat-value xp">+{lessonResult.expEarned} XP</span>
+				</div>
+			</div>
 
-		<button class="btn-primary" onclick={startLesson}>Next Lesson</button>
-		<a href="/dashboard" class="btn-secondary">Done</a>
-	</div>
+			<div class="result-actions">
+				<button class="btn-primary" onclick={startLesson}>Next Lesson</button>
+				<button onclick={() => goto("/dashboard")} class="btn-secondary">Back to Dashboard</button>
+			</div>
+		</div>
 
 	<!-- QUIZ -->
 {:else if current}
@@ -177,33 +190,91 @@
 		border-color: #ef4444;
 	}
 
-	.result {
+	.result-card {
+		max-width: 420px;
+		margin: 2.5rem auto;
+		padding: 2rem;
+		background: white;
+		border-radius: 1rem;
+		box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 		text-align: center;
-		margin-top: 2rem;
 	}
 
-	.result-xp {
+	.result-header {
+		margin-bottom: 2rem;
+	}
+
+	.result-title {
+		font-size: 1.5rem;
 		font-weight: bold;
+		color: #1f2937;
+	}
+
+	.stats-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+		margin-bottom: 2rem;
+	}
+
+	.stat-item {
+		padding: 1rem;
+		background: #f9fafb;
+		border-radius: 0.75rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.stat-label {
+		font-size: 0.875rem;
+		color: #6b7280;
+	}
+
+	.stat-value {
+		font-size: 1.25rem;
+		font-weight: bold;
+		color: #111827;
+	}
+
+	.stat-value.xp {
 		color: #16a34a;
+	}
+
+	.result-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
 	}
 
 	.btn-primary,
 	.btn-secondary {
-		display: block;
-		margin-top: 1rem;
+		width: 100%;
 		padding: 0.75rem;
 		border-radius: 0.5rem;
 		text-align: center;
 		font-weight: 600;
+		cursor: pointer;
+		transition: background-color 0.2s;
 	}
 
 	.btn-primary {
 		background: #2563eb;
 		color: white;
+		border: none;
+	}
+
+	.btn-primary:hover {
+		background: #1d4ed8;
 	}
 
 	.btn-secondary {
-		background: #6b7280;
+		background: #2563eb;
 		color: white;
+		border: none;
+	}
+
+	.btn-secondary:hover {
+		background: #1d4ed8;
 	}
 </style>

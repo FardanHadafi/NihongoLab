@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	interface VocabularyItem {
 		id: number;
@@ -25,8 +25,8 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let searchQuery = $state($page.url.searchParams.get('q') ?? '');
-	let selectedLevel = $state(Number($page.url.searchParams.get('level') ?? 1));
+	let searchQuery = $state(page.url.searchParams.get('q') ?? '');
+	let selectedLevel = $state(Number(page.url.searchParams.get('level') ?? 1));
 	let searchTimeout: ReturnType<typeof setTimeout>;
 
 	// State for infinite scroll
@@ -138,7 +138,7 @@
 
 <div class="container">
 	<header class="header">
-		<h1>📚 Japanese Vocabulary</h1>
+		<h1>Japanese Vocabulary</h1>
 		<p class="subtitle">Learn and explore Japanese words by category</p>
 	</header>
 
