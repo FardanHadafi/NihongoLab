@@ -4,15 +4,15 @@
 	import type { DashboardData } from '@nihongolab/db';
 	import Navbar from '$lib/components/Navbar.svelte';
 
-	let data: DashboardData | null = null;
-	let loading = true;
-	let error = '';
+	let data: DashboardData | null = $state(null);
+	let loading = $state(true);
+	let error = $state('');
 
-	let progressPercentage = 0;
-
-	$: if (data?.user.currentLevel) {
-		progressPercentage = (data.user.currentExp / data.user.currentLevel.requiredExp) * 100;
-	}
+	let progressPercentage = $derived(
+		data?.user.currentLevel
+			? (data.user.currentExp / data.user.currentLevel.requiredExp) * 100
+			: 0
+	);
 
 	onMount(async () => {
 		await fetchDashboardData();

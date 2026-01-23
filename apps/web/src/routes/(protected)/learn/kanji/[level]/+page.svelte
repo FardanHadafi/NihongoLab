@@ -4,16 +4,15 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 
-	let questions: QuizQuestion[] = [];
-	let currentIndex = 0;
-	let selected: string | null = null;
-	let finished = false;
-	let loading = true;
+	let questions: QuizQuestion[] = $state([]);
+	let currentIndex = $state(0);
+	let selected: string | null = $state(null);
+	let finished = $state(false);
+	let loading = $state(true);
 
-	let lessonResult: LessonResult | null = null;
-
-	$: level = page.params.level;
-	$: current = questions[currentIndex];
+	let lessonResult: LessonResult | null = $state(null);
+	let level = $derived(page.params.level);
+	let current = $derived(questions[currentIndex]);
 
 	// LESSON FLOW
 	async function startLesson() {
@@ -180,14 +179,22 @@
 		cursor: pointer;
 	}
 
+	.option:disabled {
+		cursor: not-allowed;
+	}
+
 	.option.correct {
-		background: #dcfce7;
-		border-color: #22c55e;
+		background: #dcfce7 !important;
+		border-color: #22c55e !important;
+		color: #166534 !important;
+		opacity: 1 !important;
 	}
 
 	.option.wrong {
-		background: #fee2e2;
-		border-color: #ef4444;
+		background: #fee2e2 !important;
+		border-color: #ef4444 !important;
+		color: #7f1d1d !important;
+		opacity: 1 !important;
 	}
 
 	.result-card {
@@ -269,12 +276,12 @@
 	}
 
 	.btn-secondary {
-		background: #2563eb;
-		color: white;
+		background: #f3f4f6;
+		color: #4b5563;
 		border: none;
 	}
 
 	.btn-secondary:hover {
-		background: #1d4ed8;
+		background: #e5e7eb;
 	}
 </style>
