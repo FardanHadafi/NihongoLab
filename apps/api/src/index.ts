@@ -9,8 +9,27 @@ import { serve } from '@hono/node-server';
 import dashboardController from './controller/dashboardController';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { vocabularyController } from './controller/vocabularyController';
+import { globalRateLimiter, authRateLimiter } from './middleware/rateLimiter';
 
 const app = new Hono().basePath('/api');
+
+// Rate Limiter
+app.use('*', async (c, next) => {
+  try {
+    return await globalRateLimiter(c, next);
+  } catch (error) {
+    console.error('Global Rate Limiter error:', error);
+    return next();
+  }
+});
+app.use('/auth/*', async (c, next) => {
+  try {
+    return await authRateLimiter(c, next);
+  } catch (error) {
+    console.error('Auth Rate Limiter error:', error);
+    return next();
+  }
+});
 
 // CORS for auth routes - Path is relative to basePath, so just '/auth/*'
 app.use(
@@ -40,7 +59,9 @@ app.use(
 // CSRF Protection - Skip auth routes (Better-Auth has its own protection)
 app.use('/*', async (c, next) => {
   // Skip CSRF for auth routes
-  if (c.req.path.startsWith('/auth')) {
+  // Better-Auth routes are like /api/auth/sign-in/email, and basePath is /api
+  // So c.req.path will be /api/auth/sign-in/email
+  if (c.req.path.startsWith('/api/auth')) {
     return next();
   }
 
@@ -51,8 +72,13 @@ app.use('/*', async (c, next) => {
 });
 
 // Better-Auth Controller (handles /api/auth/*)
-app.on(['POST', 'GET'], '/auth/**', (c) => {
-  return auth.handler(c.req.raw);
+app.on(['POST', 'GET'], '/auth/**', async (c) => {
+  try {
+    return await auth.handler(c.req.raw);
+  } catch (error) {
+    console.error('Better-Auth handler error:', error);
+    return c.json({ error: 'Authentication internal error' }, 500);
+  }
 });
 
 // User Controller & Learning Controller

@@ -15,6 +15,7 @@ export const db = drizzle(pool, { schema, casing: 'snake_case' });
 // Export Schema
 export * from './schema';
 export * from './validation/userValidation';
+// @ts-ignore
 export * from './db.types';
 
 // Export Repositories (The Classes)

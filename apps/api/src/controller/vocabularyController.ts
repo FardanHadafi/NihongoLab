@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
-import { getVocabularyPaginated } from '../service/vocabularyService';
+import { getVocabularyPaginated } from '@/service/vocabularyService';
 
 const querySchema = z.object({
   levelId: z.coerce.number().int().positive(),

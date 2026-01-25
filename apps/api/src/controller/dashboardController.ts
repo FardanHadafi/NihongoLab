@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
-import { DashboardService } from '../service/dashboardService';
-import { authMiddleware } from '../middleware/auth.middleware';
+import { DashboardService } from '@/service/dashboardService';
+import { authMiddleware } from '@/middleware/auth.middleware';
 import z from 'zod';
 
 const dashboardController = new Hono();

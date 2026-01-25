@@ -6,7 +6,8 @@ import { sendEmail } from './email';
 import { openAPI } from 'better-auth/plugins';
 
 export const auth = betterAuth({
-  baseURL: process.env.AUTH_BASE_URL!,
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
