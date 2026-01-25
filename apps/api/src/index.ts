@@ -9,6 +9,8 @@ import dashboardController from './controller/dashboardController';
 import { vocabularyController } from './controller/vocabularyController';
 import { globalRateLimiter, authRateLimiter } from './middleware/rateLimiter';
 
+import { serve } from '@hono/node-server';
+
 const app = new Hono().basePath('/api');
 
 // Rate limiters
@@ -70,5 +72,14 @@ app.route('/learn', learningController);
 app.route('/dashboard', dashboardController);
 app.route('/vocabulary', vocabularyController);
 
+if (process.env.NODE_ENV !== 'production') {
+  const port = 3000;
+  console.log(`Server is running on port ${port}`);
+
+  serve({
+    fetch: app.fetch,
+    port
+  });
+}
+
 export default app;
-export const fetch = app.fetch;
