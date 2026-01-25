@@ -1,18 +1,32 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { csrf } from 'hono/csrf';
+
 import { auth } from './lib/auth';
+
 import userController from './controller/userController';
 import learningController from './controller/learningController';
-import { serve } from '@hono/node-server';
 import dashboardController from './controller/dashboardController';
-import { serveStatic } from '@hono/node-server/serve-static';
 import { vocabularyController } from './controller/vocabularyController';
+
 import { globalRateLimiter, authRateLimiter } from './middleware/rateLimiter';
 
+// --------------------------------------------------
+// App
+// --------------------------------------------------
 const app = new Hono().basePath('/api');
 
-// Rate Limiter
+// --------------------------------------------------
+// Environment-aware origin
+// --------------------------------------------------
+const WEB_ORIGIN =
+  process.env.NODE_ENV === 'production'
+    ? 'https://https://nihongo-lab-git-main-fardan-hadafis-projects.vercel.app/'
+    : 'http://localhost:5173';
+
+// --------------------------------------------------
+// Rate Limiters
+// --------------------------------------------------
 app.use('*', async (c, next) => {
   try {
     return await globalRateLimiter(c, next);
@@ -21,6 +35,7 @@ app.use('*', async (c, next) => {
     return next();
   }
 });
+
 app.use('/auth/*', async (c, next) => {
   try {
     return await authRateLimiter(c, next);
@@ -30,71 +45,71 @@ app.use('/auth/*', async (c, next) => {
   }
 });
 
-// CORS for auth routes - Path is relative to basePath, so just '/auth/*'
+// --------------------------------------------------
+// CORS (Auth routes)
+// --------------------------------------------------
 app.use(
   '/auth/*',
   cors({
-    origin: 'http://localhost:5173',
-    allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    allowMethods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
-    exposeHeaders: ['Content-Length', 'Set-Cookie'],
-    maxAge: 600,
-    credentials: true
+    origin: WEB_ORIGIN,
+    credentials: true,
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['GET', 'POST', 'OPTIONS']
   })
 );
 
-// CORS for other API routes
+// --------------------------------------------------
+// CORS (Other API routes)
+// --------------------------------------------------
 app.use(
   '/*',
   cors({
-    origin: 'http://localhost:5173',
-    allowHeaders: ['Content-Type', 'Authorization'],
-    allowMethods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
-    maxAge: 600,
+    origin: WEB_ORIGIN,
     credentials: true
   })
 );
 
-// CSRF Protection - Skip auth routes (Better-Auth has its own protection)
+// --------------------------------------------------
+// CSRF (skip Better-Auth routes)
+// --------------------------------------------------
 app.use('/*', async (c, next) => {
-  // Skip CSRF for auth routes
-  // Better-Auth routes are like /api/auth/sign-in/email, and basePath is /api
-  // So c.req.path will be /api/auth/sign-in/email
   if (c.req.path.startsWith('/api/auth')) {
     return next();
   }
 
-  // Apply CSRF to other routes
   return csrf({
-    origin: 'http://localhost:5173'
+    origin: WEB_ORIGIN
   })(c, next);
 });
 
-// Better-Auth Controller (handles /api/auth/*)
-app.on(['POST', 'GET'], '/auth/**', async (c) => {
+// --------------------------------------------------
+// Better-Auth handler
+// --------------------------------------------------
+app.on(['GET', 'POST'], '/auth/**', async (c) => {
   try {
     return await auth.handler(c.req.raw);
   } catch (error) {
-    console.error('Better-Auth handler error:', error);
+    console.error('Better-Auth error:', error);
     return c.json({ error: 'Authentication internal error' }, 500);
   }
 });
 
-// User Controller & Learning Controller
-app.route('/users', userController); // /api/users/me
-app.route('/learn', learningController); // /api/learn/submit
+// --------------------------------------------------
+// API Routes
+// --------------------------------------------------
+app.route('/users', userController);
+app.route('/learn', learningController);
 app.route('/dashboard', dashboardController);
 app.route('/vocabulary', vocabularyController);
 
-// Upload Image
-app.use('/uploads/*', serveStatic({ root: './public' }));
-
-const port = 3000;
-console.log(`Server is running on port ${port}`);
-
-serve({
-  fetch: app.fetch,
-  port
+// --------------------------------------------------
+// Health check (IMPORTANT for Vercel)
+// --------------------------------------------------
+app.get('/health', (c) => {
+  return c.json({ ok: true });
 });
 
+// --------------------------------------------------
+// Export ONLY (no server, no port)
+// --------------------------------------------------
 export default app;
