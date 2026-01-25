@@ -1,10 +1,11 @@
 {
   "name": "@nihongolab/api",
   "scripts": {
-    "dev": "set NODE_ENV=development && tsx watch --env-file=../../.env src/index.ts",
-    "build": "tsup src/index.ts --format esm --out-dir dist",
+    "build": "tsup src/index.ts --format cjs --out-dir dist",
+    "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js"
   },
+  "type": "module",
   "dependencies": {
     "@hono/node-server": "^1.19.9",
     "@hono/zod-validator": "^0.7.6",
