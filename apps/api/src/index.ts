@@ -64,6 +64,7 @@ app.on(['GET', 'POST'], '/auth/**', (c) => {
 });
 
 // Routes
+app.get('/', (c) => c.text('API OK'));
 app.route('/users', userController);
 app.route('/learn', learningController);
 app.route('/dashboard', dashboardController);
