@@ -3,32 +3,20 @@ import { cors } from 'hono/cors';
 import { csrf } from 'hono/csrf';
 
 import { auth } from './lib/auth';
-
 import userController from './controller/userController';
 import learningController from './controller/learningController';
 import dashboardController from './controller/dashboardController';
 import { vocabularyController } from './controller/vocabularyController';
-
 import { globalRateLimiter, authRateLimiter } from './middleware/rateLimiter';
 
-// --------------------------------------------------
-// App
-// --------------------------------------------------
 const app = new Hono().basePath('/api');
 
-// --------------------------------------------------
-// Environment-aware origin
-// --------------------------------------------------
-const WEB_ORIGIN = process.env.AUTH_BASE_URL || 'http://localhost:5173';
-
-// --------------------------------------------------
-// Rate Limiters
-// --------------------------------------------------
+// Rate limiters
 app.use('*', async (c, next) => {
   try {
     return await globalRateLimiter(c, next);
-  } catch (error) {
-    console.error('Global Rate Limiter error:', error);
+  } catch (err) {
+    console.error(err);
     return next();
   }
 });
@@ -36,28 +24,23 @@ app.use('*', async (c, next) => {
 app.use('/auth/*', async (c, next) => {
   try {
     return await authRateLimiter(c, next);
-  } catch (error) {
-    console.error('Auth Rate Limiter error:', error);
+  } catch (err) {
+    console.error(err);
     return next();
   }
 });
 
-// --------------------------------------------------
-// CORS (Auth routes)
-// --------------------------------------------------
+// CORS (PRODUCTION)
+const WEB_ORIGIN = process.env.AUTH_BASE_URL!;
+
 app.use(
   '/auth/*',
   cors({
     origin: WEB_ORIGIN,
-    credentials: true,
-    allowHeaders: ['Content-Type', 'Authorization'],
-    allowMethods: ['GET', 'POST', 'OPTIONS']
+    credentials: true
   })
 );
 
-// --------------------------------------------------
-// CORS (Other API routes)
-// --------------------------------------------------
 app.use(
   '/*',
   cors({
@@ -66,47 +49,25 @@ app.use(
   })
 );
 
-// --------------------------------------------------
-// CSRF (skip Better-Auth routes)
-// --------------------------------------------------
-app.use('/*', async (c, next) => {
-  if (c.req.path.startsWith('/api/auth')) {
-    return next();
-  }
+// CSRF (skip auth)
+app.use('*', async (c, next) => {
+  if (c.req.path.startsWith('/api/auth')) return next();
 
   return csrf({
     origin: WEB_ORIGIN
   })(c, next);
 });
 
-// --------------------------------------------------
-// Better-Auth handler
-// --------------------------------------------------
-app.on(['GET', 'POST'], '/auth/**', async (c) => {
-  try {
-    return await auth.handler(c.req.raw);
-  } catch (error) {
-    console.error('Better-Auth error:', error);
-    return c.json({ error: 'Authentication internal error' }, 500);
-  }
+// Better-Auth
+app.on(['GET', 'POST'], '/auth/**', (c) => {
+  return auth.handler(c.req.raw);
 });
 
-// --------------------------------------------------
-// API Routes
-// --------------------------------------------------
+// Routes
 app.route('/users', userController);
 app.route('/learn', learningController);
 app.route('/dashboard', dashboardController);
 app.route('/vocabulary', vocabularyController);
 
-// --------------------------------------------------
-// Health check (IMPORTANT for Vercel)
-// --------------------------------------------------
-app.get('/health', (c) => {
-  return c.json({ ok: true });
-});
-
-// --------------------------------------------------
-// Export ONLY (no server, no port)
-// --------------------------------------------------
 export default app;
+export const fetch = app.fetch;
