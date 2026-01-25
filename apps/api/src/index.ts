@@ -19,10 +19,7 @@ const app = new Hono().basePath('/api');
 // --------------------------------------------------
 // Environment-aware origin
 // --------------------------------------------------
-const WEB_ORIGIN =
-  process.env.NODE_ENV === 'production'
-    ? 'https://https://nihongo-lab-git-main-fardan-hadafis-projects.vercel.app/'
-    : 'http://localhost:5173';
+const WEB_ORIGIN = process.env.AUTH_BASE_URL || 'http://localhost:5173';
 
 // --------------------------------------------------
 // Rate Limiters

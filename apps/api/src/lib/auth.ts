@@ -24,20 +24,24 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      const verificationUrl = `${url}&callbackURL=http://localhost:5173/sign-in`;
+      const verificationUrl = `${url}&callbackURL=${process.env.AUTH_BASE_URL || 'http://localhost:5173'}/sign-in`;
       console.log('Verification URL:', verificationUrl);
       await sendEmail({
         to: process.env.DEV_MAIL!,
         subject: 'Verify your email address',
-        text: `Click the link to verify your email: ${url}`
+        text: `Click the link to verify your email: ${verificationUrl}`
       });
     },
     async afterEmailVerification(user, request) {
       console.log(`${user.email} has been successfully verified !`);
     }
   },
-  trustedOrigins: ['http://localhost:5173'],
-  plugins: [openAPI()]
+  trustedOrigins: [process.env.AUTH_BASE_URL || 'http://localhost:5173'],
+  plugins: [openAPI()],
+  cookies: {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none'
+  }
 });
 
 export type Auth = typeof auth;

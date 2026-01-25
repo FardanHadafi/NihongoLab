@@ -1,6 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 
-const HONO_API_URL = 'http://localhost:3000';
+const HONO_API_URL = env.PRIVATE_API_URL || 'http://localhost:3000';
 
 export const fallback: RequestHandler = async ({ request, fetch, params }) => {
 	const url = new URL(request.url);

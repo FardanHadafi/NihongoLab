@@ -1,5 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import type {Actions} from "./$types"
+import { env } from '$env/dynamic/private';
 
 export const actions = {
 	signup: async ({request, fetch, cookies}) => {
@@ -7,9 +8,10 @@ export const actions = {
 		const name = data.get("name");
 		const email = data.get("email");
 		const password = data.get("password");
+		const apiBaseUrl = env.PRIVATE_API_URL || 'http://localhost:3000';
 
 		try {
-			const response = await fetch("http://localhost:3000/api/auth/sign-up/email", {
+			const response = await fetch(`${apiBaseUrl}/api/auth/sign-up/email`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"

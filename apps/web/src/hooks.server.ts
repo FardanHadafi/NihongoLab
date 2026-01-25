@@ -1,12 +1,14 @@
 import type { Handle } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// Get cookie from the browser
 	const cookieHeader = event.request.headers.get('cookie') || '';
+	const apiBaseUrl = env.PRIVATE_API_URL || 'http://localhost:3000';
 
 	// Ask Backend if the session is valid
 	try {
-		const response = await fetch('http://localhost:3000/api/auth/get-session', {
+		const response = await fetch(`${apiBaseUrl}/api/auth/get-session`, {
 			headers: {
 				cookie: cookieHeader
 			}

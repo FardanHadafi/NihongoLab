@@ -23,5 +23,5 @@ export const auth = betterAuth({
       });
     }
   },
-  trustedOrigins: ['http://localhost:5173']
+  trustedOrigins: [process.env.AUTH_BASE_URL || 'http://localhost:5173']
 });
