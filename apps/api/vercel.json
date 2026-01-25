@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "dist/index.js": {
-      "runtime": "nodejs25.x"
-    }
-  },
   "routes": [
     {
       "src": "/(.*)",
