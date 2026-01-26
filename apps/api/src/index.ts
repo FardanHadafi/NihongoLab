@@ -61,7 +61,7 @@ app.use(
 app.use(
   '/*',
   cors({
-    origin: 'http://localhost:5173',
+    origin: FRONTEND_ORIGIN,
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
     maxAge: 600,
