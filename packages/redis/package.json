@@ -16,7 +16,8 @@
     "build": "tsup"
   },
   "dependencies": {
-    "ioredis": "^5.4.1"
+    "ioredis": "^5.4.1",
+    "redis": "^5.10.0"
   },
   "devDependencies": {
     "tsup": "^8.0.0",
