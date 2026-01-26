@@ -101,7 +101,12 @@ app.route('/dashboard', dashboardController);
 app.route('/vocabulary', vocabularyController);
 
 // Upload Image
-app.use('/uploads/*', serveStatic({ root: './public' }));
+app.use(
+  '/uploads/*',
+  serveStatic({
+    root: path.resolve(__dirname, '../public')
+  })
+);
 
 const port = Number(process.env.PORT) || 3000;
 console.log(`Server is running on port ${port}`);
