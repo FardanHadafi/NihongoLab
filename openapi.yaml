@@ -102,6 +102,62 @@ components:
         - userId
         - createdAt
         - updatedAt
+    UpdateUserInput:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        image:
+          type: string
+        currentExp:
+          type: integer
+        levelName:
+          type: string
+        requiredExp:
+          type: integer
+    SubmitAnswerResponse:
+      type: object
+      properties:
+        isCorrect:
+          type: boolean
+        correctAnswer:
+          type: string
+        expEarned:
+          type: integer
+        leveledUp:
+          type: boolean
+        newLevelId:
+          type: integer
+          nullable: true
+        userExp:
+          type: integer
+          nullable: true
+        attempts:
+          type: integer
+    CompleteLessonResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+        correct:
+          type: integer
+        accuracy:
+          type: number
+        expEarned:
+          type: integer
+        userExp:
+          type: integer
+        levelId:
+          type: integer
     Verification:
       type: object
       properties:
@@ -142,15 +198,299 @@ security:
   - apiKeyCookie: []
     bearerAuth: []
 servers:
-  - url: http://localhost:3000/api/auth
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://nihongolab-api.vercel.app/api
+    description: Production server
 tags:
+  - name: Auth
+    description: Better Auth endpoints
+  - name: Users
+    description: User management endpoints
+  - name: Learning
+    description: Learning and progress endpoints
+  - name: Dashboard
+    description: User dashboard and review endpoints
+  - name: Vocabulary
+    description: Vocabulary and dictionary endpoints
   - name: Default
     description: Default endpoints that are included with Better Auth by default.
       These endpoints are not part of any plugin.
 paths:
-  /sign-in/social:
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Get current user profile
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+    patch:
+      tags:
+        - Users
+      summary: Update current user profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users/upload-image:
     post:
       tags:
+        - Users
+      summary: Upload user profile image
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  imageUrl:
+                    type: string
+  /learn/submit:
+    post:
+      tags:
+        - Learning
+      summary: Submit an answer to a question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                questionId:
+                  type: integer
+                answer:
+                  type: string
+              required:
+                - questionId
+                - answer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitAnswerResponse"
+  /learn/complete:
+    post:
+      tags:
+        - Learning
+      summary: Complete a lesson
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                questionIds:
+                  type: array
+                  items:
+                    type: integer
+                  minItems: 5
+              required:
+                - questionIds
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompleteLessonResponse"
+  /learn/{script}:
+    get:
+      tags:
+        - Learning
+      summary: Get random questions for a script type
+      parameters:
+        - name: script
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [hiragana, katakana, kanji]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    character:
+                      type: string
+                    options:
+                      type: array
+                      items:
+                        type: string
+  /dashboard:
+    get:
+      tags:
+        - Dashboard
+      summary: Get user dashboard data
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /dashboard/review:
+    get:
+      tags:
+        - Dashboard
+      summary: Get count of questions needing review
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviewCount:
+                    type: integer
+  /dashboard/review/start:
+    get:
+      tags:
+        - Dashboard
+      summary: Get questions for review session
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  questions:
+                    type: array
+                    items:
+                      type: object
+  /dashboard/review/answer:
+    post:
+      tags:
+        - Dashboard
+      summary: Submit answer for a review question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                questionId:
+                  type: integer
+                userAnswer:
+                  type: string
+              required:
+                - questionId
+                - userAnswer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /dashboard/kanji:
+    get:
+      tags:
+        - Dashboard
+      summary: Get kanji questions by level
+      parameters:
+        - name: level
+          in: query
+          schema:
+            type: string
+            enum: [N5, N4]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+  /vocabulary:
+    get:
+      tags:
+        - Vocabulary
+      summary: Get paginated vocabulary
+      parameters:
+        - name: levelId
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: cursor
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  levelId:
+                    type: integer
+                  limit:
+                    type: integer
+                  search:
+                    type: string
+                  nextCursor:
+                    type: integer
+                  categories:
+                    type: array
+                    items:
+                      type: object
+  /auth/sign-in/social:
+    post:
+      tags:
+        - Auth
         - Default
       description: Sign in with a social provider
       operationId: socialSignIn
@@ -324,7 +664,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /get-session:
+  /auth/get-session:
     get:
       tags:
         - Default
@@ -410,7 +750,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /sign-out:
+  /auth/sign-out:
     post:
       tags:
         - Default
@@ -496,7 +836,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /sign-up/email:
+  /auth/sign-up/email:
     post:
       tags:
         - Default
@@ -654,7 +994,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /sign-in/email:
+  /auth/sign-in/email:
     post:
       tags:
         - Default
@@ -778,7 +1118,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /reset-password:
+  /auth/reset-password:
     post:
       tags:
         - Default
@@ -875,7 +1215,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /verify-password:
+  /auth/verify-password:
     post:
       tags:
         - Default
@@ -967,7 +1307,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /verify-email:
+  /auth/verify-email:
     get:
       tags:
         - Default
@@ -1065,7 +1405,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /send-verification-email:
+  /auth/send-verification-email:
     post:
       tags:
         - Default
@@ -1163,7 +1503,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /change-email:
+  /auth/change-email:
     post:
       tags:
         - Default
@@ -1281,7 +1621,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /change-password:
+  /auth/change-password:
     post:
       tags:
         - Default
@@ -1422,7 +1762,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /update-user:
+  /auth/update-user:
     post:
       tags:
         - Default
@@ -1516,7 +1856,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /delete-user:
+  /auth/delete-user:
     post:
       tags:
         - Default
@@ -1621,7 +1961,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /request-password-reset:
+  /auth/request-password-reset:
     post:
       tags:
         - Default
@@ -1724,7 +2064,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /reset-password/{token}:
+  /auth/reset-password/{token}:
     get:
       tags:
         - Default
@@ -1816,7 +2156,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /list-sessions:
+  /auth/list-sessions:
     get:
       tags:
         - Default
@@ -1895,7 +2235,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /revoke-session:
+  /auth/revoke-session:
     post:
       tags:
         - Default
@@ -1988,7 +2328,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /revoke-sessions:
+  /auth/revoke-sessions:
     post:
       tags:
         - Default
@@ -2076,7 +2416,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /revoke-other-sessions:
+  /auth/revoke-other-sessions:
     post:
       tags:
         - Default
@@ -2164,7 +2504,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /link-social:
+  /auth/link-social:
     post:
       tags:
         - Default
@@ -2317,7 +2657,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /list-accounts:
+  /auth/list-accounts:
     get:
       tags:
         - Default
@@ -2423,7 +2763,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /delete-user/callback:
+  /auth/delete-user/callback:
     get:
       tags:
         - Default
@@ -2523,7 +2863,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /unlink-account:
+  /auth/unlink-account:
     post:
       tags:
         - Default
@@ -2617,7 +2957,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /refresh-token:
+  /auth/refresh-token:
     post:
       tags:
         - Default
@@ -2720,7 +3060,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /get-access-token:
+  /auth/get-access-token:
     post:
       tags:
         - Default
@@ -2823,7 +3163,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /account-info:
+  /auth/account-info:
     get:
       tags:
         - Default
@@ -2924,7 +3264,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /ok:
+  /auth/ok:
     get:
       tags:
         - Default
@@ -3006,7 +3346,7 @@ paths:
                     type: string
           description: Internal Server Error. This is a problem with the server that you
             cannot fix.
-  /error:
+  /auth/error:
     get:
       tags:
         - Default

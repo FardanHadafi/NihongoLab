@@ -6,6 +6,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@hono-rate-limiter/redis": "^0.1.4",
     "@hono/node-server": "^1.19.9",
     "@hono/zod-validator": "^0.7.6",
     "@nihongolab/db": "workspace:*",
@@ -17,7 +18,8 @@
     "hono-rate-limiter": "^0.5.3",
     "pg": "^8.16.3",
     "resend": "^6.7.0",
-    "zod": "^4.3.5"
+    "zod": "^4.3.5",
+    "@repo/redis": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest",

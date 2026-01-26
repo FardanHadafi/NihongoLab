@@ -1,0 +1,1 @@
+import{a0 as t,a1 as o,a2 as e,a3 as u,u as c}from"./IptEdv31.js";function f(a){e===null&&t(),u&&e.l!==null?l(e).m.push(a):o(()=>{const n=c(a);if(typeof n=="function")return n})}function l(a){var n=a.l;return n.u??(n.u={a:[],b:[],m:[]})}export{f as o};

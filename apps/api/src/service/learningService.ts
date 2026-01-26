@@ -8,6 +8,7 @@ import {
 } from '@nihongolab/db';
 import { eq, and, sql, inArray } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
+import { cache } from '@repo/redis';
 
 export class LearningService {
   private userRepository: UserRepositoryImpl;
@@ -64,6 +65,10 @@ export class LearningService {
         ) {
           leveledUp = true;
         }
+        
+        // Invalidate user profile cache
+        await cache.delete(`user:profile:${userId}`);
+        await cache.delete(`dashboard:${userId}`);
       }
 
       // Update dashboard stats (inline, no repository)
@@ -127,6 +132,10 @@ export class LearningService {
       else if (accuracy >= 0.7) expEarned = 1;
 
       const updatedUser = await this.userRepository.addExp(tx, userId, expEarned);
+
+      // Invalidate user profile cache
+      await cache.delete(`user:profile:${userId}`);
+      await cache.delete(`dashboard:${userId}`);
 
       await tx
         .insert(userStats)
