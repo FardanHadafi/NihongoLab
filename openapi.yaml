@@ -1,162 +1,384 @@
-openapi: 3.1.1
+openapi: 3.1.0
 info:
-  title: Better Auth
-  description: API Reference for your Better Auth Instance
-  version: 1.1.0
+  title: NihongoLab API
+  description: |
+    Complete API reference for NihongoLab - A Japanese language learning platform with spaced repetition system (SRS),
+    JLPT-aligned content, and gamified progress tracking.
+    
+    **Features:**
+    - Email/password authentication with Better Auth
+    - Spaced repetition learning algorithm
+    - Hiragana, Katakana, and Kanji practice
+    - JLPT N5-N1 vocabulary and questions
+    - User progress tracking with XP and levels
+    - Dashboard with learning analytics
+
+  version: 1.0.0
+  contact:
+    name: NihongoLab Support
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: http://localhost:5173
+    description: Frontend development server (SvelteKit)
+
 components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: better-auth.session_token
+      description: Session token cookie set by Better Auth
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer token for API authentication
+
   schemas:
     User:
       type: object
       properties:
         id:
           type: string
+          description: Unique user identifier
         name:
           type: string
+          description: User's display name
         email:
           type: string
+          format: email
         emailVerified:
           type: boolean
-          default: false
-          readOnly: true
+          description: Whether the user's email has been verified
         image:
           type: string
+          nullable: true
+          description: Profile image URL (Cloudinary)
         createdAt:
           type: string
           format: date-time
-          default: Generated at runtime
         updatedAt:
           type: string
           format: date-time
-          default: Generated at runtime
       required:
+        - id
         - name
         - email
+        - emailVerified
         - createdAt
         - updatedAt
-    Session:
+
+    UserProfile:
       type: object
       properties:
         id:
           type: string
-        expiresAt:
+        name:
           type: string
-          format: date-time
-        token:
+        image:
           type: string
-        createdAt:
+          nullable: true
+        currentExp:
+          type: integer
+          description: Current experience points
+        levelName:
           type: string
-          format: date-time
-          default: Generated at runtime
-        updatedAt:
-          type: string
-          format: date-time
-        ipAddress:
-          type: string
-        userAgent:
-          type: string
-        userId:
-          type: string
-      required:
-        - expiresAt
-        - token
-        - createdAt
-        - updatedAt
-        - userId
-    Account:
+          description: Current JLPT level (N5, N4, N3, N2, N1)
+          nullable: true
+        requiredExp:
+          type: integer
+          description: XP required to reach next level
+          nullable: true
+
+    Question:
       type: object
       properties:
         id:
+          type: integer
+        character:
           type: string
-        accountId:
-          type: string
-        providerId:
-          type: string
-        userId:
-          type: string
-        accessToken:
-          type: string
-        refreshToken:
-          type: string
-        idToken:
-          type: string
-        accessTokenExpiresAt:
-          type: string
-          format: date-time
-        refreshTokenExpiresAt:
-          type: string
-          format: date-time
-        scope:
-          type: string
-        password:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-          default: Generated at runtime
-        updatedAt:
-          type: string
-          format: date-time
+          description: The question text (hiragana/katakana/kanji character)
+        options:
+          type: array
+          items:
+            type: string
+          description: Multiple choice options
       required:
-        - accountId
-        - providerId
-        - userId
-        - createdAt
-        - updatedAt
-    Verification:
+        - id
+        - character
+        - options
+
+    ReviewQuestion:
+      type: object
+      properties:
+        progressId:
+          type: integer
+        questionId:
+          type: integer
+        levelId:
+          type: integer
+        scriptType:
+          type: string
+          enum: [hiragana, katakana, kanji]
+        questionType:
+          type: string
+          enum: [reading, meaning, kanji-to-reading, kanji-to-meaning, meaning-to-kanji]
+        questionText:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        attempts:
+          type: integer
+        isCorrect:
+          type: boolean
+        answeredAt:
+          type: string
+          format: date-time
+        lastAttemptedAt:
+          type: string
+          format: date-time
+          nullable: true
+        nextReviewAt:
+          type: string
+          format: date-time
+          nullable: true
+        easeFactor:
+          type: integer
+          description: SRS ease factor (130-300)
+          nullable: true
+
+    SubmitAnswerResponse:
+      type: object
+      properties:
+        isCorrect:
+          type: boolean
+        correctAnswer:
+          type: string
+        expEarned:
+          type: integer
+          description: XP earned (only on first correct answer)
+        leveledUp:
+          type: boolean
+          description: Whether user leveled up
+        newLevelId:
+          type: integer
+          nullable: true
+        userExp:
+          type: integer
+          nullable: true
+        attempts:
+          type: integer
+          description: Total attempts for this question
+      required:
+        - isCorrect
+        - correctAnswer
+        - expEarned
+        - leveledUp
+
+    ReviewAnswerResponse:
+      type: object
+      properties:
+        isCorrect:
+          type: boolean
+        correctAnswer:
+          type: string
+        nextReviewAt:
+          type: string
+          format: date-time
+          description: Next scheduled review date (SRS)
+        easeFactor:
+          type: integer
+          description: Updated ease factor
+      required:
+        - isCorrect
+        - correctAnswer
+        - nextReviewAt
+        - easeFactor
+
+    CompleteLessonResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+        correct:
+          type: integer
+        accuracy:
+          type: number
+          format: float
+          description: Accuracy percentage (0-1)
+        expEarned:
+          type: integer
+        userExp:
+          type: integer
+        levelId:
+          type: integer
+          nullable: true
+
+    DashboardData:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+            currentExp:
+              type: integer
+            currentLevel:
+              type: object
+              nullable: true
+              properties:
+                name:
+                  type: string
+                  example: N5
+                requiredExp:
+                  type: integer
+            nextLevel:
+              type: object
+              nullable: true
+              properties:
+                name:
+                  type: string
+                  example: N4
+                requiredExp:
+                  type: integer
+        stats:
+          type: object
+          properties:
+            totalAnswered:
+              type: integer
+            correctAnswers:
+              type: integer
+            accuracyRate:
+              type: integer
+              description: Percentage accuracy (0-100)
+            streak:
+              type: integer
+              description: Current daily streak
+            lastActiveAt:
+              type: string
+              format: date-time
+        levelProgress:
+          type: array
+          items:
+            type: object
+            properties:
+              levelName:
+                type: string
+              totalQuestions:
+                type: integer
+              answeredCorrect:
+                type: integer
+              percentage:
+                type: integer
+        recentActivity:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              count:
+                type: integer
+          description: Last 7 days of activity
+        questionsMastered:
+          type: integer
+          description: Total questions answered correctly at least once
+        questionsNeedingReview:
+          type: integer
+          description: Questions that need review (SRS or incorrect)
+
+    VocabularyWord:
       type: object
       properties:
         id:
+          type: integer
+        word:
           type: string
-        identifier:
+          description: Japanese word
+        reading:
           type: string
-        value:
+          nullable: true
+          description: Hiragana/katakana reading
+        meaning:
           type: string
-        expiresAt:
+          description: English meaning
+        category:
           type: string
-          format: date-time
-        createdAt:
+          nullable: true
+          description: Category (food, time, verb, etc.)
+        partOfSpeech:
           type: string
-          format: date-time
-          default: Generated at runtime
-        updatedAt:
+          description: Part of speech
+
+    VocabularyCategory:
+      type: object
+      properties:
+        category:
           type: string
-          format: date-time
-          default: Generated at runtime
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/VocabularyWord'
+
+    VocabularyResponse:
+      type: object
+      properties:
+        levelId:
+          type: integer
+        limit:
+          type: integer
+        search:
+          type: string
+          nullable: true
+        nextCursor:
+          type: integer
+          nullable: true
+          description: Use this as cursor for next page
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/VocabularyCategory'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
       required:
-        - identifier
-        - value
-        - expiresAt
-        - createdAt
-        - updatedAt
-  securitySchemes:
-    apiKeyCookie:
-      type: apiKey
-      in: cookie
-      name: apiKeyCookie
-      description: API Key authentication via cookie
-    bearerAuth:
-      type: http
-      scheme: bearer
-      description: Bearer token authentication
+        - error
+
 security:
-  - apiKeyCookie: []
-    bearerAuth: []
-servers:
-  - url: http://localhost:3000/api/auth
+  - cookieAuth: []
+  - bearerAuth: []
+
 tags:
-  - name: Default
-    description: Default endpoints that are included with Better Auth by default.
-      These endpoints are not part of any plugin.
+  - name: Authentication
+    description: Better Auth endpoints for user authentication and session management
+  - name: Users
+    description: User profile management and Cloudinary image uploads
+  - name: Learning
+    description: Learning sessions with instant feedback and XP rewards
+  - name: Dashboard
+    description: User progress, statistics, and spaced repetition reviews
+  - name: Vocabulary
+    description: JLPT-aligned vocabulary browsing with pagination
+
 paths:
-  /sign-in/social:
+  # ============================================
+  # AUTHENTICATION ENDPOINTS (Better Auth)
+  # ============================================
+  /auth/sign-up/email:
     post:
       tags:
-        - Default
-      description: Sign in with a social provider
-      operationId: socialSignIn
-      security:
-        - bearerAuth: []
-      parameters: []
+        - Authentication
+      summary: Register new user with email/password
+      operationId: signUp
+      security: []
       requestBody:
         required: true
         content:
@@ -164,178 +386,137 @@ paths:
             schema:
               type: object
               properties:
-                callbackURL:
-                  type:
-                    - string
-                    - "null"
-                  description: Callback URL to redirect to after the user has signed in
-                newUserCallbackURL:
-                  type:
-                    - string
-                    - "null"
-                errorCallbackURL:
-                  type:
-                    - string
-                    - "null"
-                  description: Callback URL to redirect to if an error happens
-                provider:
+                name:
                   type: string
-                disableRedirect:
-                  type:
-                    - boolean
-                    - "null"
-                  description: Disable automatic redirection to the provider. Useful for handling
-                    the redirection yourself
-                idToken:
-                  type:
-                    - object
-                    - "null"
-                  properties:
-                    token:
-                      type: string
-                      description: ID token from the provider
-                    nonce:
-                      type:
-                        - string
-                        - "null"
-                      description: Nonce used to generate the token
-                    accessToken:
-                      type:
-                        - string
-                        - "null"
-                      description: Access token from the provider
-                    refreshToken:
-                      type:
-                        - string
-                        - "null"
-                      description: Refresh token from the provider
-                    expiresAt:
-                      type:
-                        - number
-                        - "null"
-                      description: Expiry date of the token
-                  required:
-                    - token
-                scopes:
-                  type:
-                    - array
-                    - "null"
-                  description: Array of scopes to request from the provider. This will override
-                    the default scopes passed.
-                requestSignUp:
-                  type:
-                    - boolean
-                    - "null"
-                  description: Explicitly request sign-up. Useful when disableImplicitSignUp is
-                    true for this provider
-                loginHint:
-                  type:
-                    - string
-                    - "null"
-                  description: The login hint to use for the authorization code request
-                additionalData:
-                  type:
-                    - string
-                    - "null"
+                  example: John Doe
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: SecurePass123!
+                image:
+                  type: string
+                  nullable: true
               required:
-                - provider
+                - name
+                - email
+                - password
       responses:
-        "200":
-          description: Success - Returns either session details or redirect URL
+        '200':
+          description: User created successfully. Verification email sent.
           content:
             application/json:
               schema:
                 type: object
-                description: Session response when idToken is provided
                 properties:
+                  user:
+                    $ref: '#/components/schemas/User'
                   token:
                     type: string
+                    nullable: true
+        '422':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User already exists
+
+  /auth/sign-in/email:
+    post:
+      tags:
+        - Authentication
+      summary: Sign in with email and password
+      operationId: signIn
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                rememberMe:
+                  type: boolean
+                  default: true
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Signed in successfully
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: better-auth.session_token=abc123; HttpOnly; Secure; SameSite=Lax
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
                   user:
-                    type: object
-                    $ref: "#/components/schemas/User"
-                  url:
+                    $ref: '#/components/schemas/User'
+                  token:
                     type: string
                   redirect:
                     type: boolean
-                    enum:
-                      - false
-                required:
-                  - redirect
-                  - token
-                  - user
-        "400":
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Email not verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/sign-out:
+    post:
+      tags:
+        - Authentication
+      summary: Sign out current user
+      operationId: signOut
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Signed out successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /get-session:
+                  success:
+                    type: boolean
+
+  /auth/get-session:
     get:
       tags:
-        - Default
-      description: Get the current session
+        - Authentication
+      summary: Get current session and user data
       operationId: getSession
       security:
-        - bearerAuth: []
-      parameters: []
+        - cookieAuth: []
       responses:
-        "200":
-          description: Success
+        '200':
+          description: Current session data or null if not authenticated
           content:
             application/json:
               schema:
@@ -343,169 +524,58 @@ paths:
                 nullable: true
                 properties:
                   session:
-                    $ref: "#/components/schemas/Session"
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      userId:
+                        type: string
+                      expiresAt:
+                        type: string
+                        format: date-time
                   user:
-                    $ref: "#/components/schemas/User"
-                required:
-                  - session
-                  - user
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /sign-out:
-    post:
+                    $ref: '#/components/schemas/User'
+
+  # ============================================
+  # USER ENDPOINTS
+  # ============================================
+  /users/me:
+    get:
       tags:
-        - Default
-      description: Sign out the current user
-      operationId: signOut
+        - Users
+      summary: Get current user profile with level info
+      operationId: getUserProfile
       security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
+        - cookieAuth: []
       responses:
-        "200":
-          description: Success
+        '200':
+          description: User profile with current JLPT level
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-        "400":
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          description: Unauthorized - No valid session
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Email not verified
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /sign-up/email:
-    post:
+                $ref: '#/components/schemas/Error'
+
+    patch:
       tags:
-        - Default
-      description: Sign up a user using email and password
-      operationId: signUpWithEmailAndPassword
+        - Users
+      summary: Update user profile (name, image)
+      operationId: updateUserProfile
       security:
-        - bearerAuth: []
-      parameters: []
+        - cookieAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -513,1666 +583,165 @@ paths:
               properties:
                 name:
                   type: string
-                  description: The name of the user
-                email:
-                  type: string
-                  description: The email of the user
-                password:
-                  type: string
-                  description: The password of the user
+                  minLength: 1
                 image:
                   type: string
-                  description: The profile image URL of the user
-                callbackURL:
-                  type: string
-                  description: The URL to use for email verification callback
-                rememberMe:
-                  type: boolean
-                  description: If this is false, the session will not be remembered. Default is
-                    `true`.
-              required:
-                - name
-                - email
-                - password
-      responses:
-        "200":
-          description: Successfully created user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    nullable: true
-                    description: Authentication token for the session
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: The unique identifier of the user
-                      email:
-                        type: string
-                        format: email
-                        description: The email address of the user
-                      name:
-                        type: string
-                        description: The name of the user
-                      image:
-                        type: string
-                        format: uri
-                        nullable: true
-                        description: The profile image URL of the user
-                      emailVerified:
-                        type: boolean
-                        description: Whether the email has been verified
-                      createdAt:
-                        type: string
-                        format: date-time
-                        description: When the user was created
-                      updatedAt:
-                        type: string
-                        format: date-time
-                        description: When the user was last updated
-                    required:
-                      - id
-                      - email
-                      - name
-                      - emailVerified
-                      - createdAt
-                      - updatedAt
-                required:
-                  - user
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "422":
-          description: Unprocessable Entity. User already exists or failed to create user.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /sign-in/email:
-    post:
-      tags:
-        - Default
-      description: Sign in with email and password
-      operationId: signInEmail
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: Email of the user
-                password:
-                  type: string
-                  description: Password of the user
-                callbackURL:
-                  type:
-                    - string
-                    - "null"
-                  description: Callback URL to use as a redirect for email verification
-                rememberMe:
-                  type:
-                    - boolean
-                    - "null"
-                  description: If this is false, the session will not be remembered. Default is
-                    `true`.
-                  default: true
-              required:
-                - email
-                - password
-      responses:
-        "200":
-          description: Success - Returns either session details or redirect URL
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Session response when idToken is provided
-                properties:
-                  redirect:
-                    type: boolean
-                    enum:
-                      - false
-                  token:
-                    type: string
-                    description: Session token
-                  url:
-                    type: string
-                    nullable: true
-                  user:
-                    type: object
-                    $ref: "#/components/schemas/User"
-                required:
-                  - redirect
-                  - token
-                  - user
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /reset-password:
-    post:
-      tags:
-        - Default
-      description: Reset the password for a user
-      operationId: resetPassword
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                newPassword:
-                  type: string
-                  description: The new password to set
-                token:
-                  type:
-                    - string
-                    - "null"
-                  description: The token to reset the password
-              required:
-                - newPassword
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /verify-password:
-    post:
-      tags:
-        - Default
-      description: Verify the current user's password
-      operationId: verifyPassword
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  description: The password to verify
-              required:
-                - password
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /verify-email:
-    get:
-      tags:
-        - Default
-      description: Verify the email of the user
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: token
-          in: query
-          description: The token to verify the email
-          required: true
-          schema:
-            type: string
-        - name: callbackURL
-          in: query
-          description: The URL to redirect to after email verification
-          required: false
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    type: object
-                    $ref: "#/components/schemas/User"
-                  status:
-                    type: boolean
-                    description: Indicates if the email was verified successfully
-                required:
-                  - user
-                  - status
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /send-verification-email:
-    post:
-      tags:
-        - Default
-      description: Send a verification email to the user
-      operationId: sendVerificationEmail
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: The email to send the verification email to
-                  example: user@example.com
-                callbackURL:
-                  type: string
-                  description: The URL to use for email verification callback
-                  example: https://example.com/callback
                   nullable: true
-              required:
-                - email
+                  description: URL to profile image (usually from Cloudinary)
       responses:
-        "200":
-          description: Success
+        '200':
+          description: Profile updated successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    description: Indicates if the email was sent successfully
-                    example: true
-        "400":
-          description: Bad Request
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Update failed or invalid input
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: Error message
-                    example: Verification email isn't enabled
-        "401":
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /change-email:
+                $ref: '#/components/schemas/Error'
+
+  /users/upload-image:
     post:
       tags:
-        - Default
-      operationId: changeEmail
+        - Users
+      summary: Upload profile image to Cloudinary
+      description: |
+        Uploads an image file to Cloudinary with automatic transformations:
+        - Resized to 400x400 with face detection
+        - Optimized quality
+        - Auto format conversion (WebP support)
+        
+        **Constraints:**
+        - Max file size: 5MB
+        - Allowed formats: JPEG, PNG, WEBP
+      operationId: uploadProfileImage
       security:
-        - bearerAuth: []
-      parameters: []
+        - cookieAuth: []
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                newEmail:
-                  type: string
-                  description: The new email address to set must be a valid email address
-                callbackURL:
-                  type:
-                    - string
-                    - "null"
-                  description: The URL to redirect to after email verification
-              required:
-                - newEmail
-      responses:
-        "200":
-          description: Email change request processed successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    type: object
-                    $ref: "#/components/schemas/User"
-                  status:
-                    type: boolean
-                    description: Indicates if the request was successful
-                  message:
-                    type: string
-                    enum:
-                      - Email updated
-                      - Verification email sent
-                    description: Status message of the email change process
-                    nullable: true
-                required:
-                  - status
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "422":
-          description: Unprocessable Entity. Email already exists
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /change-password:
-    post:
-      tags:
-        - Default
-      description: Change the password of the user
-      operationId: changePassword
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                newPassword:
-                  type: string
-                  description: The new password to set
-                currentPassword:
-                  type: string
-                  description: The current password is required
-                revokeOtherSessions:
-                  type:
-                    - boolean
-                    - "null"
-                  description: Must be a boolean value
-              required:
-                - newPassword
-                - currentPassword
-      responses:
-        "200":
-          description: Password successfully changed
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    nullable: true
-                    description: New session token if other sessions were revoked
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        description: The unique identifier of the user
-                      email:
-                        type: string
-                        format: email
-                        description: The email address of the user
-                      name:
-                        type: string
-                        description: The name of the user
-                      image:
-                        type: string
-                        format: uri
-                        nullable: true
-                        description: The profile image URL of the user
-                      emailVerified:
-                        type: boolean
-                        description: Whether the email has been verified
-                      createdAt:
-                        type: string
-                        format: date-time
-                        description: When the user was created
-                      updatedAt:
-                        type: string
-                        format: date-time
-                        description: When the user was last updated
-                    required:
-                      - id
-                      - email
-                      - name
-                      - emailVerified
-                      - createdAt
-                      - updatedAt
-                required:
-                  - user
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /update-user:
-    post:
-      tags:
-        - Default
-      description: Update the current user
-      operationId: updateUser
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: The name of the user
                 image:
                   type: string
-                  description: The image of the user
-                  nullable: true
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    type: object
-                    $ref: "#/components/schemas/User"
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /delete-user:
-    post:
-      tags:
-        - Default
-      description: Delete the user
-      operationId: deleteUser
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                callbackURL:
-                  type: string
-                  description: The callback URL to redirect to after the user is deleted
-                password:
-                  type: string
-                  description: The user's password. Required if session is not fresh
-                token:
-                  type: string
-                  description: The deletion verification token
-      responses:
-        "200":
-          description: User deletion processed successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    description: Indicates if the operation was successful
-                  message:
-                    type: string
-                    enum:
-                      - User deleted
-                      - Verification email sent
-                    description: Status message of the deletion process
-                required:
-                  - success
-                  - message
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /request-password-reset:
-    post:
-      tags:
-        - Default
-      description: Send a password reset email to the user
-      operationId: requestPasswordReset
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: The email address of the user to send a password reset email to
-                redirectTo:
-                  type:
-                    - string
-                    - "null"
-                  description: The URL to redirect the user to reset their password. If the token
-                    isn't valid or expired, it'll be redirected with a query
-                    parameter `?error=INVALID_TOKEN`. If the token is valid,
-                    it'll be redirected with a query parameter
-                    `?token=VALID_TOKEN
+                  format: binary
+                  description: Image file to upload
               required:
-                - email
+                - image
       responses:
-        "200":
-          description: Success
+        '200':
+          description: Image uploaded successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: boolean
-                  message:
+                  imageUrl:
                     type: string
-        "400":
+                    format: uri
+                    example: https://res.cloudinary.com/nihongolab/image/upload/v1234/nihongolab/avatars/user_abc_1234567890.jpg
+        '400':
+          description: Invalid file (wrong type, too large, or missing)
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
+                $ref: '#/components/schemas/Error'
+              examples:
+                noFile:
+                  value:
+                    error: No image file provided
+                tooLarge:
+                  value:
+                    error: File size exceeds 5MB limit
+                invalidType:
+                  value:
+                    error: Invalid file type. Only JPEG, PNG, and WEBP are allowed
+        '500':
+          description: Cloudinary upload failed
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /reset-password/{token}:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================
+  # LEARNING ENDPOINTS
+  # ============================================
+  /learn/{script}:
     get:
       tags:
-        - Default
-      description: Redirects the user to the callback URL with the token
-      operationId: resetPasswordCallback
-      security:
-        - bearerAuth: []
+        - Learning
+      summary: Get random questions by script type
+      description: |
+        Returns random questions for practice sessions.
+        
+        **Script Types:**
+        - `hiragana` - Returns reading-only questions
+        - `katakana` - Returns reading-only questions
+        - `kanji` - Returns all question types (reading, meaning, kanji-to-reading, etc.)
+      operationId: getQuestionsByScript
+      security: []
       parameters:
-        - name: token
+        - name: script
           in: path
           required: true
-          description: The token to reset the password
           schema:
             type: string
-        - name: callbackURL
+            enum: [hiragana, katakana, kanji]
+          description: Type of Japanese script
+        - name: limit
           in: query
-          required: true
-          description: The URL to redirect the user to reset their password
           schema:
-            type: string
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+          description: Number of questions to return
       responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /list-sessions:
-    get:
-      tags:
-        - Default
-      description: List all active sessions for the user
-      operationId: listUserSessions
-      security:
-        - bearerAuth: []
-      parameters: []
-      responses:
-        "200":
-          description: Success
+        '200':
+          description: Random questions for the specified script
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Session"
-        "400":
+                  $ref: '#/components/schemas/Question'
+        '400':
+          description: Invalid script type
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /revoke-session:
+                $ref: '#/components/schemas/Error'
+
+  /learn/submit:
     post:
       tags:
-        - Default
-      description: Revoke a single session
+        - Learning
+      summary: Submit answer and get instant feedback
+      description: |
+        Submit an answer for a question. Returns correctness and awards XP on first correct answer.
+        
+        **XP System:**
+        - First correct answer: +1 XP
+        - Subsequent correct answers: No XP
+        - Leveling up happens automatically when XP threshold is reached
+        
+        **Progress Tracking:**
+        - Creates or updates user_progress record
+        - Increments attempt counter
+        - Updates user_stats for dashboard
+      operationId: submitAnswer
       security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                token:
-                  type: string
-                  description: The token to revoke
-              required:
-                - token
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    description: Indicates if the session was revoked successfully
-                required:
-                  - status
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /revoke-sessions:
-    post:
-      tags:
-        - Default
-      description: Revoke all sessions for the user
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    description: Indicates if all sessions were revoked successfully
-                required:
-                  - status
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /revoke-other-sessions:
-    post:
-      tags:
-        - Default
-      description: Revoke all other sessions for the user except the current one
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    description: Indicates if all other sessions were revoked successfully
-                required:
-                  - status
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /link-social:
-    post:
-      tags:
-        - Default
-      description: Link a social account to the user
-      operationId: linkSocialAccount
-      security:
-        - bearerAuth: []
-      parameters: []
+        - cookieAuth: []
       requestBody:
         required: true
         content:
@@ -2180,155 +749,263 @@ paths:
             schema:
               type: object
               properties:
-                callbackURL:
-                  type:
-                    - string
-                    - "null"
-                  description: The URL to redirect to after the user has signed in
-                provider:
+                questionId:
+                  type: integer
+                  example: 42
+                answer:
                   type: string
-                idToken:
-                  type:
-                    - object
-                    - "null"
-                  properties:
-                    token:
-                      type: string
-                    nonce:
-                      type:
-                        - string
-                        - "null"
-                    accessToken:
-                      type:
-                        - string
-                        - "null"
-                    refreshToken:
-                      type:
-                        - string
-                        - "null"
-                    scopes:
-                      type:
-                        - array
-                        - "null"
-                  required:
-                    - token
-                requestSignUp:
-                  type:
-                    - boolean
-                    - "null"
-                scopes:
-                  type:
-                    - array
-                    - "null"
-                  description: Additional scopes to request from the provider
-                errorCallbackURL:
-                  type:
-                    - string
-                    - "null"
-                  description: The URL to redirect to if there is an error during the link process
-                disableRedirect:
-                  type:
-                    - boolean
-                    - "null"
-                  description: Disable automatic redirection to the provider. Useful for handling
-                    the redirection yourself
-                additionalData:
-                  type:
-                    - string
-                    - "null"
+                  example: あ
               required:
-                - provider
+                - questionId
+                - answer
       responses:
-        "200":
-          description: Success
+        '200':
+          description: Answer processed successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  url:
-                    type: string
-                    description: The authorization URL to redirect the user to
-                  redirect:
-                    type: boolean
-                    description: Indicates if the user should be redirected to the authorization URL
-                  status:
-                    type: boolean
-                required:
-                  - redirect
-        "400":
+                $ref: '#/components/schemas/SubmitAnswerResponse'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Question not found
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
+                $ref: '#/components/schemas/Error'
+
+  /learn/complete:
+    post:
+      tags:
+        - Learning
+      summary: Complete a lesson with multiple questions
+      description: |
+        Completes a lesson and awards XP based on accuracy.
+        
+        **XP Rewards:**
+        - 100% accuracy: 1 XP
+        - 70%+ accuracy: 1 XP
+        - Below 70%: 0 XP
+        
+        **Streak Logic:**
+        - Continues streak if active today or yesterday
+        - Resets to 1 if gap detected
+      operationId: completeLesson
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                questionIds:
+                  type: array
+                  items:
+                    type: integer
+                  minItems: 5
+                  example: [1, 2, 3, 4, 5]
+              required:
+                - questionIds
+      responses:
+        '200':
+          description: Lesson completed successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
+                $ref: '#/components/schemas/CompleteLessonResponse'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Failed to complete lesson
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /list-accounts:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================
+  # DASHBOARD ENDPOINTS
+  # ============================================
+  /dashboard:
     get:
       tags:
-        - Default
-      description: List all accounts linked to the user
-      operationId: listUserAccounts
+        - Dashboard
+      summary: Get comprehensive user dashboard
+      description: |
+        Returns complete dashboard data including:
+        - User profile with current/next level
+        - Statistics (total answered, accuracy, streak)
+        - Level-wise progress breakdown
+        - Recent activity (last 7 days)
+        - Mastered questions count
+        - Questions needing review count
+      operationId: getDashboard
       security:
-        - bearerAuth: []
-      parameters: []
+        - cookieAuth: []
       responses:
-        "200":
-          description: Success
+        '200':
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardData'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /dashboard/review:
+    get:
+      tags:
+        - Dashboard
+      summary: Get count of questions needing review
+      description: |
+        Returns the number of questions that need review based on:
+        - Multiple attempts (attempts > 1)
+        - Previously answered incorrectly
+        - SRS due date passed (nextReviewAt <= now)
+      operationId: getReviewCount
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Review count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviewCount:
+                    type: integer
+                    example: 12
+
+  /dashboard/review/start:
+    get:
+      tags:
+        - Dashboard
+      summary: Start spaced repetition review session
+      description: |
+        Returns up to 20 questions that need review, prioritized by:
+        1. SRS due date (earliest first)
+        2. Last attempted date (oldest first)
+        
+        **Review Criteria:**
+        - Multiple attempts OR incorrect answers
+        - SRS-ready questions (nextReviewAt is due or null)
+      operationId: startReview
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Review questions with progress data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  questions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReviewQuestion'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /dashboard/review/answer:
+    post:
+      tags:
+        - Dashboard
+      summary: Submit answer for review question
+      description: |
+        Processes review answer with spaced repetition algorithm.
+        
+        **SRS Algorithm:**
+        - **Correct answer:** Ease factor +10 (max 300), next review = ease/100 days
+        - **Incorrect answer:** Ease factor -20 (min 130), next review = 1 day
+        - Updates attempts counter and lastAttemptedAt
+      operationId: answerReview
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                questionId:
+                  type: integer
+                  example: 42
+                userAnswer:
+                  type: string
+                  minLength: 1
+                  example: あ
+              required:
+                - questionId
+                - userAnswer
+      responses:
+        '200':
+          description: Review answer processed with updated SRS data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewAnswerResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Progress not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /dashboard/kanji:
+    get:
+      tags:
+        - Dashboard
+      summary: Get kanji questions by JLPT level
+      description: |
+        Returns all kanji questions for the specified JLPT level.
+        Currently supports N5 and N4.
+      operationId: getKanjiByLevel
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: level
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [N5, N4]
+          description: JLPT level
+          example: N5
+      responses:
+        '200':
+          description: Kanji questions for the specified level
           content:
             application/json:
               schema:
@@ -2337,749 +1014,90 @@ paths:
                   type: object
                   properties:
                     id:
+                      type: integer
+                    questionText:
                       type: string
-                    providerId:
-                      type: string
-                    createdAt:
-                      type: string
-                      format: date-time
-                    updatedAt:
-                      type: string
-                      format: date-time
-                    accountId:
-                      type: string
-                    userId:
-                      type: string
-                    scopes:
+                      description: Kanji character
+                    options:
                       type: array
                       items:
                         type: string
-                  required:
-                    - id
-                    - providerId
-                    - createdAt
-                    - updatedAt
-                    - accountId
-                    - userId
-                    - scopes
-        "400":
+                    scriptType:
+                      type: string
+                      example: kanji
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /delete-user/callback:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================
+  # VOCABULARY ENDPOINTS
+  # ============================================
+  /vocabulary:
     get:
       tags:
-        - Default
-      description: Callback to complete user deletion with verification token
-      security:
-        - bearerAuth: []
+        - Vocabulary
+      summary: Browse vocabulary with pagination and search
+      description: |
+        Returns paginated vocabulary grouped by categories.
+        
+        **Pagination:**
+        - Uses cursor-based pagination (category ID)
+        - Returns `nextCursor` for next page (null if last page)
+        
+        **Search:**
+        - Searches across word, reading, and meaning fields
+        - Case-insensitive partial matching
+        
+        **Categories:**
+        - Words are automatically grouped by category
+        - Categories: food, time, verb, adjective, etc.
+      operationId: getVocabulary
+      security: []
       parameters:
-        - name: token
+        - name: levelId
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: JLPT level ID (1=N5, 2=N4, etc.)
+          example: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 10
+            maximum: 500
+            default: 25
+          description: Number of items per page
+        - name: cursor
+          in: query
+          schema:
+            type: integer
+          description: Last category ID from previous page (for pagination)
+          example: 10
+        - name: search
           in: query
           schema:
             type: string
-            description: The token to verify the deletion request
-        - name: callbackURL
-          in: query
-          schema:
-            type:
-              - string
-              - "null"
-            description: The URL to redirect to after deletion
+            minLength: 1
+          description: Search term for filtering vocabulary
+          example: hello
       responses:
-        "200":
-          description: User successfully deleted
+        '200':
+          description: Paginated vocabulary data grouped by categories
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    description: Indicates if the deletion was successful
-                  message:
-                    type: string
-                    enum:
-                      - User deleted
-                    description: Confirmation message
-                required:
-                  - success
-                  - message
-        "400":
+                $ref: '#/components/schemas/VocabularyResponse'
+        '400':
+          description: Invalid query parameters
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /unlink-account:
-    post:
-      tags:
-        - Default
-      description: Unlink an account
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                providerId:
-                  type: string
-                accountId:
-                  type:
-                    - string
-                    - "null"
-              required:
-                - providerId
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /refresh-token:
-    post:
-      tags:
-        - Default
-      description: Refresh the access token using a refresh token
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                providerId:
-                  type: string
-                  description: The provider ID for the OAuth provider
-                accountId:
-                  type:
-                    - string
-                    - "null"
-                  description: The account ID associated with the refresh token
-                userId:
-                  type:
-                    - string
-                    - "null"
-                  description: The user ID associated with the account
-              required:
-                - providerId
-      responses:
-        "200":
-          description: Access token refreshed successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  tokenType:
-                    type: string
-                  idToken:
-                    type: string
-                  accessToken:
-                    type: string
-                  refreshToken:
-                    type: string
-                  accessTokenExpiresAt:
-                    type: string
-                    format: date-time
-                  refreshTokenExpiresAt:
-                    type: string
-                    format: date-time
-        "400":
-          description: Invalid refresh token or provider configuration
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /get-access-token:
-    post:
-      tags:
-        - Default
-      description: Get a valid access token, doing a refresh if needed
-      security:
-        - bearerAuth: []
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                providerId:
-                  type: string
-                  description: The provider ID for the OAuth provider
-                accountId:
-                  type:
-                    - string
-                    - "null"
-                  description: The account ID associated with the refresh token
-                userId:
-                  type:
-                    - string
-                    - "null"
-                  description: The user ID associated with the account
-              required:
-                - providerId
-      responses:
-        "200":
-          description: A Valid access token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  tokenType:
-                    type: string
-                  idToken:
-                    type: string
-                  accessToken:
-                    type: string
-                  refreshToken:
-                    type: string
-                  accessTokenExpiresAt:
-                    type: string
-                    format: date-time
-                  refreshTokenExpiresAt:
-                    type: string
-                    format: date-time
-        "400":
-          description: Invalid refresh token or provider configuration
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /account-info:
-    get:
-      tags:
-        - Default
-      description: Get the account info provided by the provider
-      security:
-        - bearerAuth: []
-      parameters: []
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      name:
-                        type: string
-                      email:
-                        type: string
-                      image:
-                        type: string
-                      emailVerified:
-                        type: boolean
-                    required:
-                      - id
-                      - emailVerified
-                  data:
-                    type: object
-                    properties: {}
-                    additionalProperties: true
-                required:
-                  - user
-                  - data
-                additionalProperties: false
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /ok:
-    get:
-      tags:
-        - Default
-      description: Check if the API is working
-      security:
-        - bearerAuth: []
-      parameters: []
-      responses:
-        "200":
-          description: API is working
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                    description: Indicates if the API is working
-                required:
-                  - ok
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
-  /error:
-    get:
-      tags:
-        - Default
-      description: Displays an error page
-      security:
-        - bearerAuth: []
-      parameters: []
-      responses:
-        "200":
-          description: Success
-          content:
-            text/html:
-              schema:
-                type: string
-                description: The HTML content of the error page
-        "400":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Bad Request. Usually due to missing parameters, or invalid
-            parameters.
-        "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-          description: Unauthorized. Due to missing or invalid authentication.
-        "403":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Forbidden. You do not have permission to access this resource or to
-            perform this action.
-        "404":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Not Found. The requested resource was not found.
-        "429":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Too Many Requests. You have exceeded the rate limit. Try again later.
-        "500":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-          description: Internal Server Error. This is a problem with the server that you
-            cannot fix.
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Invalid query parameters
