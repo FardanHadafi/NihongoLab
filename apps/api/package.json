@@ -1,7 +1,8 @@
 {
   "name": "@nihongolab/api",
+  "type": "module",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs --out-dir dist",
+    "build": "tsup",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js"
   },
