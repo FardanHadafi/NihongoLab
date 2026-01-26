@@ -9,9 +9,11 @@
       "import": "./dist/index.js"
     }
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup src/index.ts"
+    "build": "tsup"
   },
   "dependencies": {
     "ioredis": "^5.4.1"
