@@ -23,6 +23,9 @@ import { globalRateLimiter, authRateLimiter } from './middleware/rateLimiter';
 
 const app = new Hono().basePath('/api');
 
+const FRONTEND_ORIGIN = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+
 // Rate Limiter
 app.use('*', async (c, next) => {
   try {
@@ -45,7 +48,7 @@ app.use('/auth/*', async (c, next) => {
 app.use(
   '/auth/*',
   cors({
-    origin: 'http://localhost:5173',
+    origin: FRONTEND_ORIGIN,
     allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     allowMethods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
     exposeHeaders: ['Content-Length', 'Set-Cookie'],
@@ -77,7 +80,7 @@ app.use('/*', async (c, next) => {
 
   // Apply CSRF to other routes
   return csrf({
-    origin: 'http://localhost:5173'
+    origin: FRONTEND_ORIGIN
   })(c, next);
 });
 
@@ -100,12 +103,12 @@ app.route('/vocabulary', vocabularyController);
 // Upload Image
 app.use('/uploads/*', serveStatic({ root: './public' }));
 
-const port = 3000;
+const port = Number(process.env.PORT) || 3000;
 console.log(`Server is running on port ${port}`);
 
 serve({
   fetch: app.fetch,
-  port
+  port,
 });
 
 export default app;
