@@ -7,11 +7,7 @@
   ],
   "scripts": {
     "dev": "turbo run dev",
-    "dev:web": "turbo run dev --filter=web",
-    "dev:api": "turbo run dev --filter=api",
-    "build": "turbo run build",
-    "clean": "turbo run clean",
-    "start": "pnpm start"
+    "build": "turbo run build"
   },
   "devDependencies": {
     "@types/node": "^25.0.6",
@@ -20,8 +16,8 @@
     "prettier-plugin-svelte": "^3.4.0",
     "turbo": "^2.7.6"
   },
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@10.28.2",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   }
 }

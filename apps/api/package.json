@@ -2,7 +2,6 @@
   "name": "@nihongolab/api",
   "type": "module",
   "scripts": {
-    "postinstall": "pnpm --filter @nihongolab/db build",
     "dev": "tsx watch src/index.ts",
     "build": "tsup src/index.ts --format esm --out-dir dist",
     "start": "node dist/index.js"
@@ -13,7 +12,6 @@
     "@nihongolab/db": "workspace:*",
     "better-auth": "^1.4.11",
     "cloudinary": "^2.9.0",
-    "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.11.3",
     "hono-rate-limiter": "^0.5.3",
@@ -22,9 +20,11 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
-    "@types/bun": "latest",
     "@types/pg": "^8.16.0",
     "drizzle-kit": "^0.31.8",
     "tsup": "^8.5.1"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
