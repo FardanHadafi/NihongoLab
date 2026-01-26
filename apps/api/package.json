@@ -1,5 +1,6 @@
 {
   "name": "@nihongolab/api",
+  "type": "module",
   "scripts": {
     "dev": "set NODE_ENV=development && tsx watch --env-file=../../.env src/index.ts",
     "build": "tsup src/index.ts --format esm --out-dir dist",
