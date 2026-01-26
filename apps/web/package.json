@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "vite build",
-		"start": "node build",
+		"start": "pnpm start",
 		"dev": "vite dev"
 	},
 	"dependencies": {

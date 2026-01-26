@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "",
+    "start": "pnpm start",
     "build": "tsup src/index.ts --format esm --out-dir dist",
     "prepare": "npm run build",
     "db:generate:migration": "dotenv -e ../../.env -- drizzle-kit generate",
