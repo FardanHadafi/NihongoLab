@@ -4,16 +4,20 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
   "scripts": {
-    "dev": "tsc --watch",
-    "build": "tsc"
+    "dev": "tsup --watch",
+    "build": "tsup src/index.ts"
   },
   "dependencies": {
     "ioredis": "^5.4.1"
   },
   "devDependencies": {
+    "tsup": "^8.0.0",
     "typescript": "^5.6.0"
   }
 }
