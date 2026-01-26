@@ -9,7 +9,6 @@ import {
 } from '@nihongolab/db';
 import { eq, sql, and, gte, desc, isNull, lte, or } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
-import { cache } from '@repo/redis';
 
 function addDays(date: Date, days: number): Date {
   const result = new Date(date);
@@ -19,10 +18,6 @@ function addDays(date: Date, days: number): Date {
 
 export class DashboardService {
   async getDashboard(userId: string): Promise<DashboardData> {
-    const cacheKey = `dashboard:${userId}`;
-    const cached = await cache.get<DashboardData>(cacheKey);
-    if (cached) return cached;
-
     // User + Current Level info
     const userResult = await db
       .select({
@@ -91,8 +86,6 @@ export class DashboardService {
       questionsMastered: masteredCount,
       questionsNeedingReview: needsReviewCount
     };
-
-    await cache.set(cacheKey, result, 300); // Cache for 5 minutes
 
     return result;
   }
@@ -218,9 +211,6 @@ export class DashboardService {
       nextReviewAt,
       easeFactor: nextEase
     };
-
-    // Invalidate dashboard cache
-    await cache.delete(`dashboard:${userId}`);
 
     return result;
   }

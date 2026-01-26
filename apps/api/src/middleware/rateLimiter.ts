@@ -1,13 +1,4 @@
 import { rateLimiter } from "hono-rate-limiter";
-import { RedisStore } from "@hono-rate-limiter/redis";
-import { getRedisClient } from "@repo/redis";
-
-const redisClient = getRedisClient();
-
-const store = new RedisStore({
-  // @ts-ignore
-  client: redisClient,
-});
 
 export const globalRateLimiter = rateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -19,7 +10,6 @@ export const globalRateLimiter = rateLimiter({
     
     return `rate-limit:global:anonymous`;
   },
-  store,
 });
 
 export const authRateLimiter = rateLimiter({
@@ -31,5 +21,4 @@ export const authRateLimiter = rateLimiter({
     if (ip) return `rate-limit:auth:${ip}`;
     return `rate-limit:auth:anonymous`;
   },
-  store,
 });

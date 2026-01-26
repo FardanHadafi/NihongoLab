@@ -1,7 +1,6 @@
 import { db } from '@nihongolab/db';
 import { vocabulary } from '@nihongolab/db';
 import { eq, asc, gt, and, or, ilike } from 'drizzle-orm';
-import { cache } from '@repo/redis';
 
 type Params = {
   levelId: number;
@@ -11,11 +10,6 @@ type Params = {
 };
 
 export async function getVocabularyPaginated({ levelId, limit, cursor, search }: Params) {
-  const cacheKey = `vocab:${levelId}:${limit}:${cursor ?? 0}:${search ?? ''}`;
-
-  const cached = await cache.get<any>(cacheKey);
-  if (cached) return cached;
-
   const whereClause = and(
     eq(vocabulary.levelId, levelId),
     cursor ? gt(vocabulary.id, cursor) : undefined,
@@ -59,8 +53,6 @@ export async function getVocabularyPaginated({ levelId, limit, cursor, search }:
     nextCursor,
     categories: Array.from(grouped.values())
   };
-
-  await cache.set(cacheKey, result, 3600); // Cache for 1 hour
 
   return result;
 }

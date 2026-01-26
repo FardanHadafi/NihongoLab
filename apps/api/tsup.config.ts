@@ -12,7 +12,7 @@ export default defineConfig({
   platform: 'node',
   target: 'node18',
   shims: true,
-  noExternal: ['@nihongolab/db', '@repo/redis', 'ioredis', '@hono-rate-limiter/redis', 'pg'],
+  noExternal: ['@nihongolab/db', 'pg'],
   banner: {
     js: `
 import { createRequire } from 'module';

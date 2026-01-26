@@ -6,7 +6,8 @@
     "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@nihongolab/db": ["../../packages/db/src/index.ts"]
     },
     "resolveJsonModule": true,
     "strict": true,
