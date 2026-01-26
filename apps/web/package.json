@@ -5,11 +5,12 @@
 	"type": "module",
 	"scripts": {
 		"build": "vite build",
-		"preview": "vite preview",
+		"start": "node build",
 		"dev": "vite dev"
 	},
 	"dependencies": {
 		"@repo/ui": "workspace:*",
+		"@sveltejs/adapter-node": "^5.5.2",
 		"better-auth": "^1.4.11",
 		"dotenv": "^17.2.3",
 		"drizzle-orm": "^0.45.1",
