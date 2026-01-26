@@ -1,0 +1,6 @@
+# nixpacks.toml
+
+[phases.setup]
+# Installs system packages required for the application.
+# libatomic1 is a common dependency for Node.js applications with native modules.
+aptPkgs = ["libatomic1"]
