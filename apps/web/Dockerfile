@@ -9,7 +9,7 @@ RUN npm install -g pnpm turbo
 FROM base AS builder
 WORKDIR /app
 COPY . .
-RUN turbo prune @nihongolab/api --docker
+RUN turbo prune @nihongolab/web --docker
 
 # --------------------
 # INSTALL + BUILD
@@ -24,20 +24,19 @@ RUN pnpm install --frozen-lockfile
 
 COPY --from=builder /app/out/full/ .
 
-# 🔑 THIS IS THE CRITICAL LINE
-RUN pnpm turbo run build --filter=@nihongolab/api...
+RUN pnpm turbo run build --filter=@nihongolab/web
 
-# --------------------
-# RUNTIME
-# --------------------
-FROM node:22-alpine AS runner
+# Final stage
+FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY --from=installer /app/apps/api/dist ./apps/api/dist
-COPY --from=installer /app/apps/api/package.json ./apps/api/package.json
+# Copy built app and its production node_modules
+COPY --from=installer /app/apps/web/build ./apps/web/build
+COPY --from=installer /app/apps/web/package.json ./apps/web/package.json
 COPY --from=installer /app/node_modules ./node_modules
+COPY --from=installer /app/apps/web/node_modules ./apps/web/node_modules
 
-WORKDIR /app/apps/api
-EXPOSE 3001
-CMD ["node", "dist/index.js"]
+EXPOSE 5173
+ENV ORIGIN=http://localhost:5173
+CMD ["node", "apps/web/build/index.js"]

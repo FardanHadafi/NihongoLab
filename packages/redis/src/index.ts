@@ -1,19 +1,20 @@
-import Redis from 'ioredis';
+import RedisPkg from 'ioredis';
+const Redis = (RedisPkg as any).default || RedisPkg;
 
 // Singleton pattern for Redis client
-let redisClient: Redis | null = null;
+let redisClient: any = null;
 
-export function getRedisClient(): Redis {
+export function getRedisClient(): any {
   if (!redisClient) {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
     redisClient = new Redis(redisUrl, {
       maxRetriesPerRequest: 3,
-      retryStrategy(times) {
+      retryStrategy(times: number) {
         const delay = Math.min(times * 50, 2000);
         return delay;
       },
-      reconnectOnError(err) {
+      reconnectOnError(err: Error) {
         const targetError = 'READONLY';
         if (err.message.includes(targetError)) {
           // Reconnect when Redis is in READONLY mode
@@ -23,7 +24,14 @@ export function getRedisClient(): Redis {
       }
     });
 
-    redisClient.on('error', (err) => {
+    // Add scriptLoad shim for ioredis (used by @hono-rate-limiter/redis)
+    if (typeof redisClient.scriptLoad !== 'function') {
+      redisClient.scriptLoad = function (script: string) {
+        return this.script('load', script);
+      };
+    }
+
+    redisClient.on('error', (err: Error) => {
       console.error('Redis Client Error:', err);
     });
 
@@ -86,4 +94,4 @@ export const cache = {
   }
 };
 
-export { Redis };
+export { RedisPkg as Redis };
