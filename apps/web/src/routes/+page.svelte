@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	let email = '';
-	let mobileMenuOpen = false;
+	let email = $state('');
+	let mobileMenuOpen = $state(false);
 
 	function handleNewsletterSubmit(e: Event) {
 		e.preventDefault();

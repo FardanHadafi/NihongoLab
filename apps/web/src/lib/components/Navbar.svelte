@@ -2,19 +2,19 @@
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
 	import { signOut } from '$lib/authClient'; // Import Better-Auth signOut
-	import type { User } from '../../../../../packages/db/src/db.types';
+	import type { User } from '@nihongolab/db';
 	import { goto } from '$app/navigation';
 	import { redirect } from '@sveltejs/kit';
 
-	let user: User = {
+	let user: User = $state({
 		name: 'Loading...',
 		email: '',
 		image: null
-	};
+	});
 
-	let showProfileMenu = false;
-	let showMobileMenu = false;
-	let isLoggingOut = false;
+	let showProfileMenu = $state(false);
+	let showMobileMenu = $state(false);
+	let isLoggingOut = $state(false);
 
 	onMount(async () => {
 		await fetchUserProfile();
@@ -61,8 +61,8 @@
 		showMobileMenu = false;
 	}
 
-	let kanjiOpen = false;
-	let kanjiTimeout: ReturnType<typeof setTimeout> | null = null;
+	let kanjiOpen = $state(false);
+	let kanjiTimeout: ReturnType<typeof setTimeout> | null = $state(null);
 
 	function toggleKanji() {
 		kanjiOpen = !kanjiOpen;
