@@ -3,9 +3,9 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite",
 		"build": "vite build",
-		"start": "node build/index.js"
+		"start": "vite preview"
 	},
 	"dependencies": {
 		"@repo/ui": "workspace:*",

@@ -1,0 +1,7 @@
+[build]
+builder = "nixpacks"
+buildCommand = "cd ../.. && pnpm install && pnpm turbo run build --filter=api"
+
+[deploy]
+startCommand = "pnpm start"
+restartPolicyType = "on_failure"
